@@ -14,23 +14,26 @@ void stack(char *db_file, char **query) {
     Stack stack;
     stack.elements = NULL;
     stack.top = 0;
+    stack.elements = malloc(MAX_LEN * sizeof(char *));
     if (flag) {
         for (int i = 1; i < size; i++) {
-            (&stack)->elements = malloc(MAX_LEN * sizeof(char *));
             SPUSH(&stack, line[i]);
         }
     }
     stack_commands(query, &stack);
-    SAVE(db_file, stack, size);
+    SAVE(db_file, stack, stack.top, query[1], flag);
+    for (int i = 0; i <= size; i++) {
+        free(line[i]);
+    }
+    free(line);
 }
 
 void stack_commands(char **query, Stack *stack) {
     if (!strcmp(query[0], "SPUSH")) {
-        stack->elements = malloc(MAX_LEN * sizeof(char *));
         SPUSH(stack, query[2]);
         printf("-> %s\n", query[2]);
     } else if (!strcmp(query[0], "SPOP")) {
-        printf("-> %s", SPOP(stack));
+        printf("-> %s\n", SPOP(stack));
     } else
         ERROR;
 }

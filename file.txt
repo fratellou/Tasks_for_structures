@@ -1,4 +1,0 @@
-wtf
-why
-myset test value
-wtf
