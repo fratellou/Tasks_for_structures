@@ -46,6 +46,7 @@
         if (fp == NULL) {                                                     \
             FILE *new = fopen(filename, "a+");                                \
             fprintf(new, "\n");                                               \
+            ERROR;                                                            \
             fclose(new);                                                      \
         }                                                                     \
         fclose(fp);                                                           \

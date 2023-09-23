@@ -54,11 +54,11 @@ int main(int argc, char *argv[]) {
 
 void request(char *db_file, char **query) {
     if (!strcmp(query[0], "SADD") || !strcmp(query[0], "SREM") || !strcmp(query[0], "SISMEMBER")) {
-        // set(db_file, query);
+        set(db_file, query);
     } else if (!strcmp(query[0], "SPUSH") || !strcmp(query[0], "SPOP")) {
         stack(db_file, query);
     } else if (!strcmp(query[0], "QPUSH") || !strcmp(query[0], "QPOP")) {
-        // queue(db_file, query);
+        queue(db_file, query);
     } else if (!strcmp(query[0], "HSET") || !strcmp(query[0], "HDEL") || !strcmp(query[0], "HGET")) {
         // hash(db_file, query);
     } else

@@ -7,27 +7,31 @@
 #include "macro.h"
 
 void set(char *db_file, char **query) {
-    FILE *file = fopen(db_file, "a+");
-    if (file != NULL) {
-        char *set_name = malloc(MAX_LEN * sizeof(char));
-        Set set;
-        set.elements = NULL;
-        set.size = 0;
-        set_commands(query, &set);
-
-        fclose(file);
-        free(set_name);
-        // SAVE(db_file, &set);
-    } else
-        ERROR;
+    char **line = malloc(MAX_LEN * sizeof(char *));  //Строка в файле, содержащая записи структуры
+    int size = 0;
+    int flag = 0;
+    STRUCT(line, db_file, flag, query[1], size);
+    Set set;
+    set.elements = NULL;
+    set.size = 0;
+    set.elements = malloc(MAX_LEN * sizeof(char *));
+    if (flag) {
+        for (int i = 1; i < size; i++) {
+            SADD(&set, line[i]);
+        }
+    }
+    set_commands(query, &set);
+    SAVE(db_file, set, set.size - 1, query[1], flag);
+    for (int i = 0; i <= size; i++) {
+        free(line[i]);
+    }
+    free(line);
 }
 
 void set_commands(char **query, Set *set) {
     if (!strcmp(query[0], "SADD")) {
-        set->elements = malloc(MAX_LEN * sizeof(char *));
         SADD(set, query[2]);
         printf("-> %s\n", query[2]);
-        free(set->elements);
     } else if (!strcmp(query[0], "SREM")) {
         SREM(set, query[2]);
         printf("-> %s\n", query[2]);
