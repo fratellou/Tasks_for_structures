@@ -60,7 +60,7 @@ void request(char *db_file, char **query) {
     } else if (!strcmp(query[0], "QPUSH") || !strcmp(query[0], "QPOP")) {
         queue(db_file, query);
     } else if (!strcmp(query[0], "HSET") || !strcmp(query[0], "HDEL") || !strcmp(query[0], "HGET")) {
-        // hash(db_file, query);
+        hash(db_file, query);
     } else
         ERROR;
 }

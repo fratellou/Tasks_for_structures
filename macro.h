@@ -7,7 +7,7 @@
 #endif
 
 #ifndef SAVE
-#define SAVE(filename, data, size, struct_name, flag)                                        \
+#define SAVE(filename, data, size, struct_name, flag, start)                                 \
     {                                                                                        \
         FILE *temp = fopen("temp.txt", "w+");                                                \
         FILE *fp = fopen(filename, "r");                                                     \
@@ -16,7 +16,7 @@
             while (fgets(string, MAX_LEN, fp) != NULL) {                                     \
                 if ((strncmp(string, struct_name, strlen(struct_name)) == 0) || flag == 0) { \
                     fprintf(temp, "%s ", struct_name);                                       \
-                    for (int i = 0; i < size; i++) {                                         \
+                    for (int i = start; i < size && size > 0; i++) {                         \
                         fprintf(temp, "%s ", data.elements[i]);                              \
                     }                                                                        \
                     fprintf(temp, "\n");                                                     \
@@ -75,4 +75,38 @@
         }                                                                     \
     }
 #endif
+
+#ifndef HASH_SAVE
+#define HASH_SAVE(filename, data, size, struct_name, flag, start)                            \
+    {                                                                                        \
+        FILE *temp = fopen("temp.txt", "w+");                                                \
+        FILE *fp = fopen(filename, "r");                                                     \
+        if (fp && temp) {                                                                    \
+            char *string = malloc(MAX_LEN * sizeof(char));                                   \
+            while (fgets(string, MAX_LEN, fp) != NULL) {                                     \
+                if ((strncmp(string, struct_name, strlen(struct_name)) == 0) || flag == 0) { \
+                    fprintf(temp, "%s ", struct_name);                                       \
+                    for (int i = start; i < size && size > 0; i++) {                         \
+                        fprintf(temp, "%s ", data.elements[i]);                              \
+                    }                                                                        \
+                    fprintf(temp, "\n");                                                     \
+                    if (flag == 0) {                                                         \
+                        fprintf(temp, "%s", string);                                         \
+                        flag = 1;                                                            \
+                    }                                                                        \
+                } else {                                                                     \
+                    fprintf(temp, "%s", string);                                             \
+                }                                                                            \
+            }                                                                                \
+            free(string);                                                                    \
+            fclose(fp);                                                                      \
+            fclose(temp);                                                                    \
+            remove(struct_name);                                                             \
+            rename("temp.txt", filename);                                                    \
+        } else {                                                                             \
+            ERROR;                                                                           \
+        }                                                                                    \
+    }
+#endif
+
 #endif

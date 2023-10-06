@@ -22,10 +22,8 @@ void queue(char *db_file, char **query) {
         }
     }
     queue_commands(query, &queue);
-    for (int j = 0; j <= MAX_LEN; j++) {
-        printf("%s\t", queue.elements[j]);
-    }
-    SAVE(db_file, queue, queue.size - 1, query[1], flag);
+    printf("%d\n", queue.size);
+    SAVE(db_file, queue, queue.size + 1, query[1], flag, queue.front);
     for (int i = 0; i <= size; i++) {
         free(line[i]);
     }

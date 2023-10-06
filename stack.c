@@ -21,7 +21,7 @@ void stack(char *db_file, char **query) {
         }
     }
     stack_commands(query, &stack);
-    SAVE(db_file, stack, stack.top, query[1], flag);
+    SAVE(db_file, stack, stack.top, query[1], flag, 0);
     for (int i = 0; i <= size; i++) {
         free(line[i]);
     }

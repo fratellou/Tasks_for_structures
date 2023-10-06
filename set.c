@@ -21,7 +21,7 @@ void set(char *db_file, char **query) {
         }
     }
     set_commands(query, &set);
-    SAVE(db_file, set, set.size - 1, query[1], flag);
+    SAVE(db_file, set, set.size - 1, query[1], flag, 0);
     for (int i = 0; i <= size; i++) {
         free(line[i]);
     }
