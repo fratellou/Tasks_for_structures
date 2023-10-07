@@ -1,14 +1,20 @@
 #ifndef STACK_H
 #define STACK_H
 
-typedef struct Stack {
-    char **elements;
-    int top;
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+typedef struct Stack { 
+    Node *head;
 } Stack;
 
 void stack(char *db_file, char **query);
 void stack_commands(char **query, Stack *stack);
 void SPUSH(Stack *stack, char *element);
 char *SPOP(Stack *stack);
+void write_stack(char *filename, Stack *stack);
+Stack* read_stack(char *filename, Stack *stack);
 
 #endif
