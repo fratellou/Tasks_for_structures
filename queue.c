@@ -8,23 +8,19 @@
 
 void queue(char *db_file, char **query) {
     char **line = malloc(MAX_LEN * sizeof(char *));  //Строка в файле, содержащая записи структуры
-    int size = 0;
     int flag = 0;
+    int size = 0;
+    Queue queue = {NULL, NULL, 0};
     STRUCT(line, db_file, flag, query[1], size);
-    Queue queue;
-    queue.elements = NULL;
-    queue.front = 0;
-    queue.size = 0;
-    queue.elements = malloc(MAX_LEN * sizeof(char *));
     if (flag) {
         for (int i = 1; i < size; i++) {
             QPUSH(&queue, line[i]);
         }
     }
     queue_commands(query, &queue);
-    printf("%d\n", queue.size);
-    SAVE(db_file, queue, queue.size + 1, query[1], flag, queue.front);
-    for (int i = 0; i <= size; i++) {
+    write_queue(db_file, &queue, query[1], &flag);
+    
+    for (int i = 0; i <= queue.size; i++) {
         free(line[i]);
     }
     free(line);
@@ -41,19 +37,56 @@ void queue_commands(char **query, Queue *queue) {
 }
 
 void QPUSH(Queue *queue, char *element) {
-    if (queue->size < MAX_LEN) {
-        queue->elements[(queue->front + queue->size) % MAX_LEN] = element;
-        queue->size++;
-    } else
-        ERROR;
+    struct Node_que* node = malloc(sizeof(Node_que));
+    node->data = element;
+    if (queue->head == NULL) {
+        queue->head = node;
+        queue->tail = node;
+    } else {
+        queue->tail->next = node;
+        queue->tail = node;
+    }
+    queue->size++;
 }
 
 char *QPOP(Queue *queue) {
-    if (queue->size > 0) {
-        char *element = queue->elements[queue->front];
-        queue->front = ((queue->front) + 1) % MAX_LEN;
+    if (queue->head == NULL) {
+        return NULL;
+    } else {
+        char* val = queue->head->data;
+        queue->head = queue->head->next;
         queue->size--;
-        return element;
+        return val;
     }
-    return NULL;
+}
+
+void write_queue(char *filename, Queue *queue, char *struct_name, int *flag) {
+    FILE *temp = fopen("temp.txt", "w+");
+    FILE *fp = fopen(filename, "r");
+    if (fp && temp) {
+        char *string = malloc(MAX_LEN * sizeof(char));
+        while (fgets(string, MAX_LEN, fp) != NULL) {
+            if ((strncmp(string, struct_name, strlen(struct_name)) == 0) || *flag == 0) {
+                fprintf(temp, "%s ", struct_name);
+                for (int i = 0; i < queue->size; i++) {
+                    fprintf(temp, "%s ", queue->head->data);
+                    queue->head = queue->head->next;
+                }
+                fprintf(temp, "\n");
+                if (*flag == 0) {
+                    fprintf(temp, "%s", string);
+                    *flag = 1;
+                }
+            } else {
+                fprintf(temp, "%s", string);
+            }
+        }
+        free(string);
+        remove(struct_name);
+        rename("temp.txt", filename);
+    } else {
+        ERROR;
+    }
+    fclose(fp);
+    fclose(temp);
 }

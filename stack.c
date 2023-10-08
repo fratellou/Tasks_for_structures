@@ -24,8 +24,6 @@ void stack(char *db_file, char **query) {
         free(line[i]);
     }
     free(line);
-    
-    
 }
 
 void stack_commands(char **query, Stack *stack) {
