@@ -8,22 +8,23 @@
 
 void stack(char *db_file, char **query) {
     char **line = malloc(MAX_LEN * sizeof(char *));  //Строка в файле, содержащая записи структуры
-    int size = 0;
     int flag = 0;
+    int size = 0;
+    Stack stack = {NULL, 0};
     STRUCT(line, db_file, flag, query[1], size);
-    Stack stack = {NULL};
     if (flag) {
-        for (int i = 1; i < size; i++) {
+        for (int i = size-1; i > 0; i--) {
             SPUSH(&stack, line[i]);
         }
     }
     stack_commands(query, &stack);
-    write_stack(db_file, &stack, query[1], flag);
+    write_stack(db_file, &stack, query[1], &flag);
     
-    for (int i = 0; i <= size; i++) {
+    for (int i = 0; i <= stack.size; i++) {
         free(line[i]);
     }
     free(line);
+    
     
 }
 
@@ -46,6 +47,7 @@ void SPUSH(Stack *stack, char *element) {
         node->next = stack->head;
         stack->head = node;
     }
+    stack->size++;
 }
 
 char *SPOP(Stack *stack) {
@@ -54,26 +56,27 @@ char *SPOP(Stack *stack) {
     } else {
         char *element = stack->head->data;
         stack->head = stack->head->next;
+        stack->size--;
         return element;
     }
 }
 
-void write_stack(char *filename, Stack *stack, char *struct_name, int flag) {
+void write_stack(char *filename, Stack *stack, char *struct_name, int *flag) {
     FILE *temp = fopen("temp.txt", "w+");
     FILE *fp = fopen(filename, "r");
     if (fp && temp) {
         char *string = malloc(MAX_LEN * sizeof(char));
         while (fgets(string, MAX_LEN, fp) != NULL) {
-            if ((strncmp(string, struct_name, strlen(struct_name)) == 0) || flag == 0) {
+            if ((strncmp(string, struct_name, strlen(struct_name)) == 0) || *flag == 0) {
                 fprintf(temp, "%s ", struct_name);
-                while (stack->head != NULL) {
+                for (int i = 0; i < stack->size; i++) {
                     fprintf(temp, "%s ", stack->head->data);
-                    SPOP(stack);
+                    stack->head = stack->head->next;
                 }
                 fprintf(temp, "\n");
-                if (flag == 0) {
+                if (*flag == 0) {
                     fprintf(temp, "%s", string);
-                    flag = 1;
+                    *flag = 1;
                 }
             } else {
                 fprintf(temp, "%s", string);

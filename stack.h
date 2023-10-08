@@ -8,12 +8,13 @@ typedef struct Node {
 
 typedef struct Stack {
     Node *head;
+    int size;
 } Stack;
 
 void stack(char *db_file, char **query);
 void stack_commands(char **query, Stack *stack);
 void SPUSH(Stack *stack, char *element);
 char *SPOP(Stack *stack);
-void write_stack(char *filename, Stack *stack, char *struct_name, int flag);
+void write_stack(char *filename, Stack *stack, char *struct_name, int *flag);
 
 #endif
