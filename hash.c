@@ -23,9 +23,11 @@ void hash(char *db_file, char **query) {
       HSET(hashtable, key, ptr);
     }
   }
+  //printHashTable(hashtable);
   hash_commands(query, hashtable);
+  //printHashTable(hashtable);
   write_hash(db_file, hashtable, query[1], &flag);
-
+  printHashTable(hashtable);
   for (int i = 0; i < MAX_LEN; i++) {
     Node_hash *temp = hashtable->table[i];
     while (temp != NULL) {
@@ -76,11 +78,8 @@ Node_hash *createNode(char *key, char *value) {
 }
 
 int hash_calc(char *key) {
-  int sum = 0;
-  for (int i = 0; i < (int)strlen(key); i++) {
-    sum += key[i];
-  }
-  return sum % MAX_LEN;
+  char *end;
+  return strtol(key, &end, 10) % MAX_LEN;
 }
 
 void HSET(HashTable *hashtable, char *key, char *value) {
@@ -142,7 +141,13 @@ void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *fl
           Node_hash *temp_hash = hashtable->table[i];
           while (temp_hash != NULL) {
             if (temp_hash->key != NULL && temp_hash->value != NULL) {
-              fprintf(temp, "%s,%s ", temp_hash->key, temp_hash->value);
+              char *temp_key = malloc(strlen(temp_hash->key) + 1);
+              char *temp_value = malloc(strlen(temp_hash->value) + 1);
+              strcpy(temp_key, temp_hash->key);
+              strcpy(temp_value, temp_hash->value);
+              fprintf(temp, "%s,%s ", temp_key, temp_value);
+              free(temp_key);
+              free(temp_value);
             }
             temp_hash = temp_hash->next;
           }
@@ -165,4 +170,17 @@ void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *fl
   }
   fclose(fp);
   fclose(temp);
+}
+
+void printHashTable(HashTable *hashtable) {
+    printf("Hash Table:\n");
+    for (int i = 0; i < hashtable->size; i++) {
+        printf("[%d]: ", i);
+        Node_hash *temp = hashtable->table[i];
+        while (temp != NULL) {
+            printf("(%s, %s) ", temp->key, temp->value);
+            temp = temp->next;
+        }
+        printf("\n");
+    }
 }
