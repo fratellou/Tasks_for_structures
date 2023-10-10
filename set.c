@@ -7,74 +7,75 @@
 #include "macro.h"
 
 void set(char *db_file, char **query) {
-    char **line = malloc(MAX_LEN * sizeof(char *));  //Строка в файле, содержащая записи структуры
-    int size = 0;
-    int flag = 0;
-    STRUCT(line, db_file, flag, query[1], size);
-    Set set;
-    set.elements = NULL;
-    set.size = 0;
-    set.elements = malloc(MAX_LEN * sizeof(char *));
-    if (flag) {
-        for (int i = 1; i < size; i++) {
-            SADD(&set, line[i]);
-        }
+  char **line = malloc(
+      MAX_LEN * sizeof(char *)); //Строка в файле, содержащая записи структуры
+  int size = 0;
+  int flag = 0;
+  STRUCT(line, db_file, flag, query[1], size);
+  Set set;
+  set.elements = NULL;
+  set.size = 0;
+  set.elements = malloc(MAX_LEN * sizeof(char *));
+  if (flag) {
+    for (int i = 1; i < size; i++) {
+      SADD(&set, line[i]);
     }
-    set_commands(query, &set);
-   // SAVE(db_file, set, set.size - 1, query[1], flag, 0);
-    for (int i = 0; i <= size; i++) {
-        free(line[i]);
-    }
-    free(line);
+  }
+  set_commands(query, &set);
+  // SAVE(db_file, set, set.size - 1, query[1], flag, 0);
+  for (int i = 0; i <= size; i++) {
+    free(line[i]);
+  }
+  free(line);
 }
 
 void set_commands(char **query, Set *set) {
-    if (!strcmp(query[0], "SADD")) {
-        SADD(set, query[2]);
-        printf("-> %s\n", query[2]);
-    } else if (!strcmp(query[0], "SREM")) {
-        SREM(set, query[2]);
-        printf("-> %s\n", query[2]);
-    } else if (!strcmp(query[0], "SISMEMBER")) {
-        if (!SISMEMBER(set, query[2]))
-            printf("\n-> FALSE");
-        else
-            printf("\n-> TRUE");
-    } else
-        ERROR;
+  if (!strcmp(query[0], "SADD")) {
+    SADD(set, query[2]);
+    printf("-> %s\n", query[2]);
+  } else if (!strcmp(query[0], "SREM")) {
+    SREM(set, query[2]);
+    printf("-> %s\n", query[2]);
+  } else if (!strcmp(query[0], "SISMEMBER")) {
+    if (!SISMEMBER(set, query[2]))
+      printf("\n-> FALSE");
+    else
+      printf("\n-> TRUE");
+  } else
+    ERROR;
 }
 
 void SADD(Set *set, char *element) {
-    for (int i = 0; i < set->size; i++) {
-        if (strcmp(set->elements[i], element) == 0) {
-            return;
-        }
+  for (int i = 0; i < set->size; i++) {
+    if (strcmp(set->elements[i], element) == 0) {
+      return;
     }
+  }
 
-    set->elements = realloc(set->elements, (set->size + 1) * sizeof(char *));
-    set->elements[set->size] = strdup(element);
-    set->size++;
+  set->elements = realloc(set->elements, (set->size + 1) * sizeof(char *));
+  set->elements[set->size] = strdup(element);
+  set->size++;
 }
 
 void SREM(Set *set, char *element) {
-    for (int i = 0; i < set->size; i++) {
-        if (strcmp(set->elements[i], element) == 0) {
-            free(set->elements[i]);
-            for (int j = i; j < set->size - 1; j++) {
-                set->elements[j] = set->elements[j + 1];
-            }
-            set->size--;
-            set->elements = realloc(set->elements, set->size * sizeof(char *));
-            return;
-        }
+  for (int i = 0; i < set->size; i++) {
+    if (strcmp(set->elements[i], element) == 0) {
+      free(set->elements[i]);
+      for (int j = i; j < set->size - 1; j++) {
+        set->elements[j] = set->elements[j + 1];
+      }
+      set->size--;
+      set->elements = realloc(set->elements, set->size * sizeof(char *));
+      return;
     }
+  }
 }
 
 int SISMEMBER(Set *set, char *element) {
-    for (int i = 0; i < set->size; i++) {
-        if (strcmp(set->elements[i], element) == 0) {
-            return 1;
-        }
+  for (int i = 0; i < set->size; i++) {
+    if (strcmp(set->elements[i], element) == 0) {
+      return 1;
     }
-    return 0;
+  }
+  return 0;
 }

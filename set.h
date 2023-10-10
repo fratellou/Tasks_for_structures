@@ -2,8 +2,8 @@
 #define SET_H
 
 typedef struct Set {
-    char **elements;
-    int size;
+  char **elements;
+  int size;
 } Set;
 
 void set(char *db_file, char **query);

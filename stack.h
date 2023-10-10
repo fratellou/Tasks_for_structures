@@ -2,13 +2,13 @@
 #define STACK_H
 
 typedef struct Node {
-    char *data;
-    struct Node *next;
+  char *data;
+  struct Node *next;
 } Node;
 
 typedef struct Stack {
-    Node *head;
-    int size;
+  Node *head;
+  int size;
 } Stack;
 
 void stack(char *db_file, char **query);
