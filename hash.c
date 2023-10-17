@@ -10,23 +10,34 @@ void hash(char *db_file, char **query) {
 
   char **line = malloc(
       MAX_LEN * sizeof(char *)); //Строка в файле, содержащая записи структуры
-  int flag = 0;
+  int isnt_empty = 0;
   int size = 0;
   HashTable *hashtable = createHashTable(MAX_LEN);
-  STRUCT(line, db_file, flag, query[1], size);
-  if (flag) {
-    for (int i = 1; i < size; i++) {
-      char key[5];
+  STRUCT(line, db_file, isnt_empty, query[1], size);
+      char *key = malloc(MAX_LEN * sizeof(char)); 
+    char **hash_line = malloc(MAX_LEN * sizeof(char *));
+  if (isnt_empty) {
+    for (int i = 0; i < size; i++) {
       char *ptr = strtok(line[i], ",");
-      strcpy(key, ptr);
-      ptr = strtok(NULL, ",");
-      HSET(hashtable, key, ptr);
+      int hash_size = 0;  
+      strcpy(key, ptr);                                  
+      while (ptr != NULL) {                                               
+            if (strcmp(ptr, "\n")) {                                          
+              hash_line[hash_size] = malloc(MAX_LEN * sizeof(char));                     
+              strcpy(hash_line[hash_size], ptr);                                        
+              hash_size++;                                                          
+            }                                                                 
+            ptr = strtok(NULL, ",");                                         
+          }   
+      for (int j = 0; j < hash_size; j++) {
+        HSET(hashtable, key, hash_line[j]);
+      }        
     }
   }
   //printHashTable(hashtable);
   hash_commands(query, hashtable);
   //printHashTable(hashtable);
-  write_hash(db_file, hashtable, query[1], &flag);
+  write_hash(db_file, hashtable, query[1], &isnt_empty);
   printHashTable(hashtable);
   for (int i = 0; i < MAX_LEN; i++) {
     Node_hash *temp = hashtable->table[i];
@@ -39,7 +50,8 @@ void hash(char *db_file, char **query) {
 
     }
   }
-  
+      free(key);
+    free(hash_line);
   free(hashtable->table);
   free(hashtable);
 }
@@ -62,79 +74,78 @@ void hash_commands(char **query, HashTable *hash) {
 HashTable *createHashTable(int size) {
   HashTable *ht = (HashTable *)malloc(sizeof(HashTable));
   ht->size = size;
-  ht->table = (Node_hash **)malloc(sizeof(Node_hash *) * size);
+  ht->table = malloc(sizeof(Node_hash**) * size);
   for (int i = 0; i < size; i++) {
     ht->table[i] = NULL;
   }
   return ht;
 }
 
-Node_hash *createNode(char *key, char *value) {
-  Node_hash *newNode = (Node_hash *)malloc(sizeof(Node_hash));
-  newNode->key = key;
-  newNode->value = value;
-  newNode->next = NULL;
-  return newNode;
-}
-
 int hash_calc(char *key) {
-  char *end;
-  return strtol(key, &end, 10) % MAX_LEN;
+  int hash = 0;
+  for (int i = 0; i < strlen(key); i++) {
+      hash += (int)key[i];
+  }
+  return hash % MAX_LEN; 
 }
+/*
 
 void HSET(HashTable *hashtable, char *key, char *value) {
   int index = hash_calc(key);
   Node_hash *temp = hashtable->table[index];
   while (temp != NULL) {
     if (strcmp(temp->key, key) == 0) {
-      temp->value = value;
-      return;
-    }
-    temp = temp->next;
+      if (hashtable->head == NULL) {
+        Node_hash *newNode = (Node_hash *)malloc(sizeof(Node_hash));
+        newNode->key = key;
+        newNode->element = value;
+        newNode->next = NULL;
+        newNode->prev = NULL;
+        newNode->next = hashtable->table[index];
+        hashtable->table[index] = newNode;
+      }
+      else {
+        Squeue->tail->next = node;
+        queue->tail = node;
   }
-  Node_hash *newNode = createNode(key, value);
-  newNode->next = hashtable->table[index];
-  hashtable->table[index] = newNode;
+      }
+
+    }
+  }
+
+}
+*/
+
+void HSET(HashTable* hashtable, char key, char *value) { 
+  int index = hash_calc(key); 
+  Node_hash *newNode = (Node_hash*)malloc(sizeof(Node_hash)); 
+  newNode->key = key; 
+  newNode->element = value;
+  newNode->next = NULL;
+  if (hashtable->table[index] == NULL) { 
+    hashtable->table[index] = newNode; 
+  } else { 
+      Node_hash *current = hashtable->table[index]; 
+      while (current->next != NULL) {
+        current = current->next; 
+        } 
+      current->next = newNode; 
+      } 
 }
 
 char *HDEL(HashTable *hashtable, char *key) {
-  int index = hash_calc(key);
-  Node_hash *temp = hashtable->table[index];
-  Node_hash *prev = NULL;
-  while (temp != NULL) {
-    if (strcmp(temp->key, key) == 0) {
-      if (prev == NULL) {
-        hashtable->table[index] = temp->next;
-      } else {
-        prev->next = temp->next;
-      }
-      return temp->value;
-    }
-    prev = temp;
-    temp = temp->next;
-  }
-  return NULL;
 }
 
 char *HGET(HashTable *hashtable, char *key) {
-  int index = hash_calc(key);
-  Node_hash *temp = hashtable->table[index];
-  while (temp != NULL) {
-    if (strcmp(temp->key, key) == 0) {
-      return temp->value;
-    }
-    temp = temp->next;
-  }
-  return NULL;
 }
 
-void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *flag) {
+void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *isnt_empty) {
   FILE *temp = fopen("temp.txt", "a+");
   FILE *fp = fopen(filename, "r");
   if (fp && temp) {
     char *string = malloc(MAX_LEN * sizeof(char));
     while (fgets(string, MAX_LEN, fp) != NULL) {
-      if ((strncmp(string, struct_name, strlen(struct_name)) == 0) || *flag == 0) {
+      if ((strncmp(string, struct_name, strlen(struct_name)) == 0) || *isnt_empty == 0) {
         fprintf(temp, "%s ", struct_name);
 
         for (int i = 0; i < hashtable->size; i++) {
@@ -154,9 +165,9 @@ void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *fl
         }
 
         fprintf(temp, "\n");
-        if (*flag == 0) {
+        if (*isnt_empty == 0) {
           fprintf(temp, "%s", string);
-          *flag = 1;
+          *isnt_empty = 1;
         }
       } else {
         fprintf(temp, "%s", string);

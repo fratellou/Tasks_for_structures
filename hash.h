@@ -2,20 +2,21 @@
 #define HASH_H
 
 typedef struct Node_hash {
-  char *value;
+  char *element;
   char *key;
-  struct Node_hash *next;
+  Node_hash *next;
 } Node_hash;
 
 typedef struct HashTable {
-  Node_hash **table;
+  Node_hash** table;
   int size;
+  Node_hash *head;
+  Node_hash *tail;
 } HashTable;
 
 void hash(char *db_file, char **query);
 void hash_commands(char **query, HashTable *hash);
 HashTable *createHashTable(int size);
-Node_hash *createNode(char *key, char *value);
 int hash_calc(char *key);
 void HSET(HashTable *hashtable, char *key, char *value);
 char *HDEL(HashTable *hashtable, char *key);
