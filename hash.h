@@ -22,7 +22,6 @@ void HSET(HashTable *hashtable, char *key, char *value);
 char *HDEL(HashTable *hashtable, char *key);
 char *HGET(HashTable *hashtable, char *key);
 void write_hash(char *filename, HashTable *hashtable, char *struct_name,
-                int *flag);
-void printHashTable(HashTable *hashtable);
+                int *isnt_empty, char *key);
 
 #endif

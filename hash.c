@@ -34,26 +34,8 @@ void hash(char *db_file, char **query) {
       }        
     }
   }
-  //printHashTable(hashtable);
   hash_commands(query, hashtable);
-  //printHashTable(hashtable);
-  write_hash(db_file, hashtable, query[1], &isnt_empty);
-  printHashTable(hashtable);
-  for (int i = 0; i < MAX_LEN; i++) {
-    Node_hash *temp = hashtable->table[i];
-    while (temp != NULL) {
-        if (temp->key != NULL && temp->value != NULL) {
-                    Node_hash *prev = temp;
-      temp = temp->next;
-      free(prev);
-            }
-
-    }
-  }
-      free(key);
-    free(hash_line);
-  free(hashtable->table);
-  free(hashtable);
+  write_hash(db_file, hashtable, query[1], &isnt_empty, key);
 }
 
 void hash_commands(char **query, HashTable *hash) {
@@ -88,33 +70,6 @@ int hash_calc(char *key) {
   }
   return hash % MAX_LEN; 
 }
-/*
-
-void HSET(HashTable *hashtable, char *key, char *value) {
-  int index = hash_calc(key);
-  Node_hash *temp = hashtable->table[index];
-  while (temp != NULL) {
-    if (strcmp(temp->key, key) == 0) {
-      if (hashtable->head == NULL) {
-        Node_hash *newNode = (Node_hash *)malloc(sizeof(Node_hash));
-        newNode->key = key;
-        newNode->element = value;
-        newNode->next = NULL;
-        newNode->prev = NULL;
-        newNode->next = hashtable->table[index];
-        hashtable->table[index] = newNode;
-      }
-      else {
-        Squeue->tail->next = node;
-        queue->tail = node;
-  }
-      }
-
-    }
-  }
-
-}
-*/
 
 void HSET(HashTable* hashtable, char key, char *value) { 
   int index = hash_calc(key); 
@@ -123,7 +78,9 @@ void HSET(HashTable* hashtable, char key, char *value) {
   newNode->element = value;
   newNode->next = NULL;
   if (hashtable->table[index] == NULL) { 
-    hashtable->table[index] = newNode; 
+    hashtable->table[index] = newNode;
+    hashtable->head = newNode;
+    hashtable->tail = newNode; 
   } else { 
       Node_hash *current = hashtable->table[index]; 
       while (current->next != NULL) {
@@ -131,15 +88,44 @@ void HSET(HashTable* hashtable, char key, char *value) {
         } 
       current->next = newNode; 
       } 
+      hashtable->tail = newNode;
 }
 
 char *HDEL(HashTable *hashtable, char *key) {
+  int index = hash_calc(key);
+  Node_hash *current = hashtable->table[index];
+  Node_hash *prev = NULL;
+  while (current != NULL) {
+    if (strcmp(current->key, key) == 0) {
+      if (prev == NULL) { 
+        hashtable->table[index] = current->next;
+      } else {
+        prev->next = current->next;
+      }
+      char *value = current->element;
+      free(current->key);
+      free(current);
+      return value;
+    }
+    prev = current;
+    current = current->next;
+  }
+  return NULL; 
 }
 
 char *HGET(HashTable *hashtable, char *key) {
+  int index = hash_calc(key);
+  Node_hash *current = hashtable->table[index];
+  while (current != NULL) {
+    if (strcmp(current->key, key) == 0) {
+      return current->element;
+    }
+    current = current->next;
+  }
+  return NULL; 
 }
 
-void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *isnt_empty) {
+void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *isnt_empty, char *key) {
   FILE *temp = fopen("temp.txt", "a+");
   FILE *fp = fopen(filename, "r");
   if (fp && temp) {
@@ -150,18 +136,27 @@ void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *is
 
         for (int i = 0; i < hashtable->size; i++) {
           Node_hash *temp_hash = hashtable->table[i];
+          if (temp_hash->key != NULL && temp_hash->element != NULL) {
+              if (strcmp(temp_hash->key, key) == 0) {
+                 fprintf(temp, "%s", temp_hash->element);
+                 if (temp_hash->next != NULL) printf(",");
+                }
+          }
+          /*
           while (temp_hash != NULL) {
-            if (temp_hash->key != NULL && temp_hash->value != NULL) {
-              char *temp_key = malloc(strlen(temp_hash->key) + 1);
-              char *temp_value = malloc(strlen(temp_hash->value) + 1);
-              strcpy(temp_key, temp_hash->key);
-              strcpy(temp_value, temp_hash->value);
-              fprintf(temp, "%s,%s ", temp_key, temp_value);
-              free(temp_key);
-              free(temp_value);
+            if (temp_hash->key != NULL && temp_hash->element != NULL) {
+                Node_hash *current = hashtable->table[i];
+                while (current != NULL) {
+                if (strcmp(current->key, key) == 0) {
+                 fprintf(temp, ",%s", current->element);
+                }
+                fprintf(temp, " ");
+                current = current->next;
+  }
             }
             temp_hash = temp_hash->next;
           }
+          */
         }
 
         fprintf(temp, "\n");
@@ -181,17 +176,4 @@ void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *is
   }
   fclose(fp);
   fclose(temp);
-}
-
-void printHashTable(HashTable *hashtable) {
-    printf("Hash Table:\n");
-    for (int i = 0; i < hashtable->size; i++) {
-        printf("[%d]: ", i);
-        Node_hash *temp = hashtable->table[i];
-        while (temp != NULL) {
-            printf("(%s, %s) ", temp->key, temp->value);
-            temp = temp->next;
-        }
-        printf("\n");
-    }
 }
