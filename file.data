@@ -1,2 +1,2 @@
-table  
-
+stack: struct2 val2 
+queue:stack:

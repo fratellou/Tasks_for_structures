@@ -13,7 +13,7 @@ void hash(char *db_file, char **query) {
   int isnt_empty = 0;
   int size = 0;
   HashTable *hashtable = createHashTable(MAX_LEN);
-  STRUCT(line, db_file, isnt_empty, query[1], size);
+  STRUCT(line, db_file, isnt_empty, query[1], size, "hash:");
       char *key = malloc(MAX_LEN * sizeof(char)); 
     char **hash_line = malloc(MAX_LEN * sizeof(char *));
   if (isnt_empty) {
@@ -65,13 +65,13 @@ HashTable *createHashTable(int size) {
 
 int hash_calc(char *key) {
   int hash = 0;
-  for (int i = 0; i < strlen(key); i++) {
+  for (int i = 0; i < (int)strlen(key); i++) {
       hash += (int)key[i];
   }
   return hash % MAX_LEN; 
 }
 
-void HSET(HashTable* hashtable, char key, char *value) { 
+void HSET(HashTable* hashtable, char *key, char *value) { 
   int index = hash_calc(key); 
   Node_hash *newNode = (Node_hash*)malloc(sizeof(Node_hash)); 
   newNode->key = key; 
@@ -142,23 +142,7 @@ void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *is
                  if (temp_hash->next != NULL) printf(",");
                 }
           }
-          /*
-          while (temp_hash != NULL) {
-            if (temp_hash->key != NULL && temp_hash->element != NULL) {
-                Node_hash *current = hashtable->table[i];
-                while (current != NULL) {
-                if (strcmp(current->key, key) == 0) {
-                 fprintf(temp, ",%s", current->element);
-                }
-                fprintf(temp, " ");
-                current = current->next;
-  }
-            }
-            temp_hash = temp_hash->next;
-          }
-          */
         }
-
         fprintf(temp, "\n");
         if (*isnt_empty == 0) {
           fprintf(temp, "%s", string);

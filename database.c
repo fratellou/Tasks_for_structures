@@ -42,8 +42,9 @@ int main(int argc, char *argv[]) {
     }
     if (counter_of_flags == TASK_FLAGS && argc > (TASK_FLAGS))
       request(db_file, query);
-    else
+    else {
       ERROR;
+    }
     free(db_file);
     free(query);
   } else {

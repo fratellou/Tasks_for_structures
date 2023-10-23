@@ -9,17 +9,17 @@
 void queue(char *db_file, char **query) {
   char **line = malloc(
       MAX_LEN * sizeof(char *)); //Строка в файле, содержащая записи структуры
-  int flag = 0;
+  int isnt_empty = 0;
   int size = 0;
   Queue queue = {NULL, NULL, 0};
-  STRUCT(line, db_file, flag, query[1], size);
-  if (flag) {
+  STRUCT(line, db_file, isnt_empty, query[1], size, "queue:");
+  if (isnt_empty) {
     for (int i = 1; i < size; i++) {
       QPUSH(&queue, line[i]);
     }
   }
   queue_commands(query, &queue);
-  write_queue(db_file, &queue, query[1], &flag);
+  write_queue(db_file, &queue, query[1], &isnt_empty, "queue:");
 
   for (int i = 0; i <= queue.size; i++) {
     free(line[i]);
@@ -38,7 +38,7 @@ void queue_commands(char **query, Queue *queue) {
 }
 
 void QPUSH(Queue *queue, char *element) {
-  struct Node_que *node = malloc(sizeof(Node_que));
+  Node_que *node = malloc(sizeof(Node_que));
   node->data = element;
   if (queue->head == NULL) {
     queue->head = node;
@@ -61,23 +61,25 @@ char *QPOP(Queue *queue) {
   }
 }
 
-void write_queue(char *filename, Queue *queue, char *struct_name, int *flag) {
+void write_queue(char *filename, Queue *queue, char *struct_name, int *isnt_empty, char *struct_type) {
   FILE *temp = fopen("temp.txt", "w+");
   FILE *fp = fopen(filename, "r");
   if (fp && temp) {
     char *string = malloc(MAX_LEN * sizeof(char));
     while (fgets(string, MAX_LEN, fp) != NULL) {
-      if ((strncmp(string, struct_name, strlen(struct_name)) == 0) ||
-          *flag == 0) {
-        fprintf(temp, "%s ", struct_name);
+      char *istr = strtok(string, " "); 
+      char *second_word = strtok(NULL, " "); 
+      if (((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0))  || *isnt_empty == 0) {
+          fprintf(temp, "%s ", struct_type);
+          fprintf(temp, "%s ", struct_name); 
         for (int i = 0; i < queue->size; i++) {
           fprintf(temp, "%s ", queue->head->data);
           queue->head = queue->head->next;
         }
         fprintf(temp, "\n");
-        if (*flag == 0) {
+        if (*isnt_empty == 0) {
           fprintf(temp, "%s", string);
-          *flag = 1;
+          *isnt_empty = 1;
         }
       } else {
         fprintf(temp, "%s", string);

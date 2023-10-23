@@ -10,19 +10,19 @@ void set(char *db_file, char **query) {
   char **line = malloc(
       MAX_LEN * sizeof(char *)); //Строка в файле, содержащая записи структуры
   int size = 0;
-  int flag = 0;
-  STRUCT(line, db_file, flag, query[1], size);
+  int isnt_empty = 0;
+  STRUCT(line, db_file, isnt_empty, query[1], size, "set:");
   Set set;
   set.elements = NULL;
   set.size = 0;
   set.elements = malloc(MAX_LEN * sizeof(char *));
-  if (flag) {
+  if (isnt_empty) {
     for (int i = 1; i < size; i++) {
       SADD(&set, line[i]);
     }
   }
   set_commands(query, &set);
-  // SAVE(db_file, set, set.size - 1, query[1], flag, 0);
+  // SAVE(db_file, set, set.size - 1, query[1], isnt_empty, 0);
   for (int i = 0; i <= size; i++) {
     free(line[i]);
   }

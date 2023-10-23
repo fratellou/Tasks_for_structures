@@ -9,17 +9,17 @@
 void stack(char *db_file, char **query) {
   char **line = malloc(
       MAX_LEN * sizeof(char *)); //Строка в файле, содержащая записи структуры
-  int flag = 0;
+  int isnt_empty = 0;
   int size = 0;
   Stack stack = {NULL, 0};
-  STRUCT(line, db_file, flag, query[1], size);
-  if (flag) {
+  STRUCT(line, db_file, isnt_empty, query[1], size, "stack:");
+  if (isnt_empty) {
     for (int i = size - 1; i > 0; i--) {
       SPUSH(&stack, line[i]);
     }
   }
   stack_commands(query, &stack);
-  write_stack(db_file, &stack, query[1], &flag);
+  write_stack(db_file, &stack, query[1], &isnt_empty, "stack:");
 
   for (int i = 0; i <= stack.size; i++) {
     free(line[i]);
@@ -60,34 +60,36 @@ char *SPOP(Stack *stack) {
   }
 }
 
-void write_stack(char *filename, Stack *stack, char *struct_name, int *flag) {
-  FILE *temp = fopen("temp.txt", "w+");
-  FILE *fp = fopen(filename, "r");
-  if (fp && temp) {
-    char *string = malloc(MAX_LEN * sizeof(char));
-    while (fgets(string, MAX_LEN, fp) != NULL) {
-      if ((strncmp(string, struct_name, strlen(struct_name)) == 0) ||
-          *flag == 0) {
-        fprintf(temp, "%s ", struct_name);
-        for (int i = 0; i < stack->size; i++) {
-          fprintf(temp, "%s ", stack->head->data);
-          stack->head = stack->head->next;
-        }
-        fprintf(temp, "\n");
-        if (*flag == 0) {
-          fprintf(temp, "%s", string);
-          *flag = 1;
-        }
-      } else {
-        fprintf(temp, "%s", string);
-      }
-    }
-    free(string);
-    remove(struct_name);
-    rename("temp.txt", filename);
-  } else {
-    ERROR;
-  }
-  fclose(fp);
-  fclose(temp);
+void write_stack(char *filename, Stack *stack, char *struct_name, int *isnt_empty, char *struct_type) { 
+  FILE *temp = fopen("temp.txt", "w+"); 
+  FILE *fp = fopen(filename, "r"); 
+  if (fp && temp) { 
+    char *string = malloc(MAX_LEN * sizeof(char)); 
+    while (fgets(string, MAX_LEN, fp) != NULL) { 
+      char *istr = strtok(string, " "); 
+      char *second_word = strtok(NULL, " "); 
+      if (((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0))  || *isnt_empty == 0) {
+          fprintf(temp, "%s ", struct_type);
+          fprintf(temp, "%s ", struct_name); 
+          Node *current = stack->head; // временная переменная для итерации по стеку
+          for (int i = 0; i < stack->size; i++) { 
+            fprintf(temp, "%s ", current->data); 
+            current = current->next; 
+            } 
+            fprintf(temp, "\n"); 
+            if (*isnt_empty == 0) { 
+              fprintf(temp, "%s", string); 
+              *isnt_empty = 1; } 
+          } else {
+             fprintf(temp, "%s", string); 
+             } 
+          }  
+      free(string); 
+      remove(struct_name); 
+      rename("temp.txt", filename); 
+    } else { 
+      ERROR; 
+    } 
+    fclose(fp); 
+    fclose(temp); 
 }

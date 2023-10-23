@@ -4,7 +4,7 @@
 typedef struct Node_hash {
   char *element;
   char *key;
-  Node_hash *next;
+  struct Node_hash *next;
 } Node_hash;
 
 typedef struct HashTable {
