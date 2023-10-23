@@ -70,8 +70,7 @@ void write_queue(char *filename, Queue *queue, char *struct_name, int *isnt_empt
       char *istr = strtok(string, " "); 
       char *second_word = strtok(NULL, " "); 
       if (((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0))  || *isnt_empty == 0) {
-          fprintf(temp, "%s ", struct_type);
-          fprintf(temp, "%s ", struct_name); 
+      fprintf(temp, "%s %s ", struct_type, struct_name);
         for (int i = 0; i < queue->size; i++) {
           fprintf(temp, "%s ", queue->head->data);
           queue->head = queue->head->next;
@@ -86,7 +85,7 @@ void write_queue(char *filename, Queue *queue, char *struct_name, int *isnt_empt
       }
     }
     free(string);
-    remove(struct_name);
+    remove(filename);
     rename("temp.txt", filename);
   } else {
     ERROR;

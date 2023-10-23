@@ -23,9 +23,8 @@
         char *string = malloc(MAX_LEN * sizeof(char));                      \
         while (fgets(string, MAX_LEN, file) != NULL) {                      \
           char *istr = strtok(string, " ");                                 \
-          if (strcmp(istr, struct_type) == 0) {                              \
-            istr = strtok(NULL, " ");                                       \
-            if (strcmp(istr, struct_name) == 0) {                            \
+          char *name = strtok(NULL, " ");                                   \
+          if ((strcmp(istr, struct_type) == 0) && (strcmp(struct_name, name) == 0)) {     \
               while (istr != NULL) {                                        \
                 if (strcmp(istr, "\n") != 0) {                               \
                   line[size] = malloc(MAX_LEN * sizeof(char));              \
@@ -36,7 +35,6 @@
               }                                                             \
               isnt_empty = 1;                                               \
               break;                                                        \
-            }                                                               \
           }                                                                 \
         }                                                                   \
         free(string);                                                       \

@@ -16,6 +16,7 @@ void stack(char *db_file, char **query) {
   if (isnt_empty) {
     for (int i = size - 1; i > 0; i--) {
       SPUSH(&stack, line[i]);
+      printf("%s\n", line[i]);
     }
   }
   stack_commands(query, &stack);
@@ -61,22 +62,22 @@ char *SPOP(Stack *stack) {
 }
 
 void write_stack(char *filename, Stack *stack, char *struct_name, int *isnt_empty, char *struct_type) { 
-  FILE *temp = fopen("temp.txt", "w+"); 
+  FILE *temp = fopen("temp.txt", "a+"); 
   FILE *fp = fopen(filename, "r"); 
   if (fp && temp) { 
-    char *string = malloc(MAX_LEN * sizeof(char)); 
+    char string[MAX_LEN]; 
     while (fgets(string, MAX_LEN, fp) != NULL) { 
       char *istr = strtok(string, " "); 
       char *second_word = strtok(NULL, " "); 
       if (((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0))  || *isnt_empty == 0) {
-          fprintf(temp, "%s ", struct_type);
-          fprintf(temp, "%s ", struct_name); 
-          Node *current = stack->head; // временная переменная для итерации по стеку
+          fprintf(temp, "%s %s ", struct_type, struct_name);
+          Node *current = stack->head; 
           for (int i = 0; i < stack->size; i++) { 
-            fprintf(temp, "%s ", current->data); 
+            fprintf(temp, "%s ", current->data);
             current = current->next; 
             } 
             fprintf(temp, "\n"); 
+            
             if (*isnt_empty == 0) { 
               fprintf(temp, "%s", string); 
               *isnt_empty = 1; } 
@@ -84,8 +85,7 @@ void write_stack(char *filename, Stack *stack, char *struct_name, int *isnt_empt
              fprintf(temp, "%s", string); 
              } 
           }  
-      free(string); 
-      remove(struct_name); 
+      remove(filename); 
       rename("temp.txt", filename); 
     } else { 
       ERROR; 

@@ -35,7 +35,7 @@ void hash(char *db_file, char **query) {
     }
   }
   hash_commands(query, hashtable);
-  write_hash(db_file, hashtable, query[1], &isnt_empty, key);
+  write_hash(db_file, hashtable, query[1], &isnt_empty, key, "hash:");
 }
 
 void hash_commands(char **query, HashTable *hash) {
@@ -125,21 +125,22 @@ char *HGET(HashTable *hashtable, char *key) {
   return NULL; 
 }
 
-void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *isnt_empty, char *key) {
+void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *isnt_empty, char *key, char *struct_type) {
   FILE *temp = fopen("temp.txt", "a+");
   FILE *fp = fopen(filename, "r");
   if (fp && temp) {
     char *string = malloc(MAX_LEN * sizeof(char));
     while (fgets(string, MAX_LEN, fp) != NULL) {
-      if ((strncmp(string, struct_name, strlen(struct_name)) == 0) || *isnt_empty == 0) {
-        fprintf(temp, "%s ", struct_name);
-
+      char *istr = strtok(string, " "); 
+      char *second_word = strtok(NULL, " "); 
+        if (((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0))  || *isnt_empty == 0) {
+        fprintf(temp, "%s %s", struct_type, struct_name);
         for (int i = 0; i < hashtable->size; i++) {
           Node_hash *temp_hash = hashtable->table[i];
           if (temp_hash->key != NULL && temp_hash->element != NULL) {
               if (strcmp(temp_hash->key, key) == 0) {
                  fprintf(temp, "%s", temp_hash->element);
-                 if (temp_hash->next != NULL) printf(",");
+                 if (temp_hash->next != NULL) fprintf(temp, ",");
                 }
           }
         }
@@ -153,7 +154,7 @@ void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *is
       }
     }
     free(string);
-    remove(struct_name);
+    remove(filename);
     rename("temp.txt", filename);
   } else {
     ERROR;
