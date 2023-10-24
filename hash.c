@@ -14,28 +14,18 @@ void hash(char *db_file, char **query) {
   int size = 0;
   HashTable *hashtable = createHashTable(MAX_LEN);
   STRUCT(line, db_file, isnt_empty, query[1], size, "hash:");
-      char *key = malloc(MAX_LEN * sizeof(char)); 
-    char **hash_line = malloc(MAX_LEN * sizeof(char *));
   if (isnt_empty) {
     for (int i = 0; i < size; i++) {
-      char *ptr = strtok(line[i], ",");
-      int hash_size = 0;  
-      strcpy(key, ptr);                                  
-      while (ptr != NULL) {                                               
-            if (strcmp(ptr, "\n")) {                                          
-              hash_line[hash_size] = malloc(MAX_LEN * sizeof(char));                     
-              strcpy(hash_line[hash_size], ptr);                                        
-              hash_size++;                                                          
-            }                                                                 
-            ptr = strtok(NULL, ",");                                         
-          }   
-      for (int j = 0; j < hash_size; j++) {
-        HSET(hashtable, key, hash_line[j]);
-      }        
-    }
+      char new_string[MAX_LEN];
+      strcpy(new_string, line[i]);
+      char *first_key = strtok(line[i], ",");
+      char *second_val = strtok(NULL, ",");
+      HSET(hashtable, first_key, second_val);      
+    } 
   }
   hash_commands(query, hashtable);
-  write_hash(db_file, hashtable, query[1], &isnt_empty, key, "hash:");
+  write_hash(db_file, hashtable, query[1], "hash:");
+  
 }
 
 void hash_commands(char **query, HashTable *hash) {
@@ -73,44 +63,46 @@ int hash_calc(char *key) {
 
 void HSET(HashTable* hashtable, char *key, char *value) { 
   int index = hash_calc(key); 
+  if (hashtable->table[index] != NULL && strcmp(hashtable->table[index]->key, key) != 0) {
+    ERROR;
+    return;
+  }
   Node_hash *newNode = (Node_hash*)malloc(sizeof(Node_hash)); 
   newNode->key = key; 
   newNode->element = value;
   newNode->next = NULL;
   if (hashtable->table[index] == NULL) { 
     hashtable->table[index] = newNode;
-    hashtable->head = newNode;
-    hashtable->tail = newNode; 
-  } else { 
-      Node_hash *current = hashtable->table[index]; 
-      while (current->next != NULL) {
-        current = current->next; 
-        } 
-      current->next = newNode; 
+    hashtable->table[index]->head = newNode;
+  } else {
+      newNode->next = hashtable->table[index]->head;
+      hashtable->table[index]->head = newNode;
       } 
-      hashtable->tail = newNode;
 }
 
 char *HDEL(HashTable *hashtable, char *key) {
   int index = hash_calc(key);
-  Node_hash *current = hashtable->table[index];
-  Node_hash *prev = NULL;
-  while (current != NULL) {
+  if (hashtable->table[index] == NULL || hashtable->table[index]->head == NULL) {
+    return NULL;
+  } else {
+    Node_hash *current = hashtable->table[index]->head;
     if (strcmp(current->key, key) == 0) {
-      if (prev == NULL) { 
-        hashtable->table[index] = current->next;
-      } else {
-        prev->next = current->next;
-      }
-      char *value = current->element;
-      free(current->key);
-      free(current);
-      return value;
+        char *element = current->element;
+        hashtable->table[index]->head = NULL;
+        return element;
     }
-    prev = current;
-    current = current->next;
+    Node_hash *prev =  hashtable->table[index]->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            char *element = current->element;
+            prev->next = current->next;
+            return element;
+        }
+        prev = current;
+        current = current->next;
+    }
   }
-  return NULL; 
+  return NULL;
 }
 
 char *HGET(HashTable *hashtable, char *key) {
@@ -125,40 +117,43 @@ char *HGET(HashTable *hashtable, char *key) {
   return NULL; 
 }
 
-void write_hash(char *filename, HashTable *hashtable, char *struct_name, int *isnt_empty, char *key, char *struct_type) {
-  FILE *temp = fopen("temp.txt", "a+");
-  FILE *fp = fopen(filename, "r");
-  if (fp && temp) {
-    char *string = malloc(MAX_LEN * sizeof(char));
-    while (fgets(string, MAX_LEN, fp) != NULL) {
-      char *istr = strtok(string, " "); 
+void write_hash(char *filename, HashTable *hashtable, char *struct_name, char *struct_type) {
+  FILE *temp = fopen("temp.txt", "a+"); 
+  FILE *fp = fopen(filename, "r"); 
+  if (fp && temp) { 
+    char string[MAX_LEN];
+    int new_input = 0; 
+    while (fgets(string, MAX_LEN, fp) != NULL) { 
+      char new_string[MAX_LEN];
+      strcpy(new_string, string);
+      char *istr = strtok(string, " ");
       char *second_word = strtok(NULL, " "); 
-        if (((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0))  || *isnt_empty == 0) {
-        fprintf(temp, "%s %s", struct_type, struct_name);
-        for (int i = 0; i < hashtable->size; i++) {
-          Node_hash *temp_hash = hashtable->table[i];
-          if (temp_hash->key != NULL && temp_hash->element != NULL) {
-              if (strcmp(temp_hash->key, key) == 0) {
-                 fprintf(temp, "%s", temp_hash->element);
-                 if (temp_hash->next != NULL) fprintf(temp, ",");
-                }
+      if (new_input == 0) {
+          fprintf(temp, "%s %s ", struct_type, struct_name); 
+          for (int i = 0; i < MAX_LEN; i++) {
+            if (hashtable->table[i] == NULL) continue;
+              Node_hash *current = hashtable->table[i]->head;
+               while (current != NULL) {
+                  fprintf(temp, "%s,%s ", current->key, current->element);
+                  current = current->next;
+               }
+                  //free(current);
           }
-        }
-        fprintf(temp, "\n");
-        if (*isnt_empty == 0) {
-          fprintf(temp, "%s", string);
-          *isnt_empty = 1;
-        }
-      } else {
-        fprintf(temp, "%s", string);
+            fprintf(temp, "\n");
+            new_input = 1;
       }
-    }
-    free(string);
-    remove(filename);
-    rename("temp.txt", filename);
-  } else {
-    ERROR;
-  }
-  fclose(fp);
-  fclose(temp);
+      if ((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0)) {
+        continue;
+      }
+      else {         
+        fprintf(temp, "%s", new_string);
+      }
+      }  
+      remove(filename); 
+      rename("temp.txt", filename); 
+    } else { 
+      ERROR; 
+    } 
+    fclose(fp); 
+    fclose(temp); 
 }

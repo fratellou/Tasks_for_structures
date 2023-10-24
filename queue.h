@@ -16,6 +16,6 @@ void queue(char *db_file, char **query);
 void queue_commands(char **query, Queue *queue);
 void QPUSH(Queue *queue, char *element);
 char *QPOP(Queue *queue);
-void write_queue(char *filename, Queue *queue, char *struct_name, int *flag, char *struct_type);
+void write_queue(char *filename, Queue *queue, char *struct_name, char *struct_type);
 
 #endif

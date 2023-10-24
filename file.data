@@ -1,2 +1,4 @@
-stack: struct6 val9 
-stack:
+hash: struct4 hash:,(null) key,val 
+hash: struct3 hash:,(null) hash:,(null) hash:,(null) key2,val 
+
+

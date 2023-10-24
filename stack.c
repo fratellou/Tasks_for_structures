@@ -16,11 +16,10 @@ void stack(char *db_file, char **query) {
   if (isnt_empty) {
     for (int i = size - 1; i > 0; i--) {
       SPUSH(&stack, line[i]);
-      printf("%s\n", line[i]);
     }
   }
   stack_commands(query, &stack);
-  write_stack(db_file, &stack, query[1], &isnt_empty, "stack:");
+  write_stack(db_file, &stack, query[1], "stack:");
 
   for (int i = 0; i <= stack.size; i++) {
     free(line[i]);
@@ -61,29 +60,32 @@ char *SPOP(Stack *stack) {
   }
 }
 
-void write_stack(char *filename, Stack *stack, char *struct_name, int *isnt_empty, char *struct_type) { 
+void write_stack(char *filename, Stack *stack, char *struct_name, char *struct_type) { 
   FILE *temp = fopen("temp.txt", "a+"); 
   FILE *fp = fopen(filename, "r"); 
   if (fp && temp) { 
-    char string[MAX_LEN]; 
+    char string[MAX_LEN];
+    int new_input = 0; 
     while (fgets(string, MAX_LEN, fp) != NULL) { 
-      char *istr = strtok(string, " "); 
+      char new_string[MAX_LEN];
+      strcpy(new_string, string);
+      char *istr = strtok(string, " ");
       char *second_word = strtok(NULL, " "); 
-      if (((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0))  || *isnt_empty == 0) {
-          fprintf(temp, "%s %s ", struct_type, struct_name);
-          Node *current = stack->head; 
+      if (new_input == 0) {
+          fprintf(temp, "%s %s ", struct_type, struct_name); 
           for (int i = 0; i < stack->size; i++) { 
-            fprintf(temp, "%s ", current->data);
-            current = current->next; 
+            fprintf(temp, "%s ", stack->head->data);
+            stack->head = stack->head->next;
             } 
-            fprintf(temp, "\n"); 
-            
-            if (*isnt_empty == 0) { 
-              fprintf(temp, "%s", string); 
-              *isnt_empty = 1; } 
-          } else {
-             fprintf(temp, "%s", string); 
-             } 
+            fprintf(temp, "\n");
+            new_input = 1;
+      }
+      if ((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0)) {
+        continue;
+      }
+      else {         
+        fprintf(temp, "%s", new_string);
+      }
           }  
       remove(filename); 
       rename("temp.txt", filename); 

@@ -19,7 +19,7 @@ void queue(char *db_file, char **query) {
     }
   }
   queue_commands(query, &queue);
-  write_queue(db_file, &queue, query[1], &isnt_empty, "queue:");
+  write_queue(db_file, &queue, query[1], "queue:");
 
   for (int i = 0; i <= queue.size; i++) {
     free(line[i]);
@@ -61,32 +61,35 @@ char *QPOP(Queue *queue) {
   }
 }
 
-void write_queue(char *filename, Queue *queue, char *struct_name, int *isnt_empty, char *struct_type) {
+void write_queue(char *filename, Queue *queue, char *struct_name, char *struct_type) {
   FILE *temp = fopen("temp.txt", "w+");
   FILE *fp = fopen(filename, "r");
   if (fp && temp) {
-    char *string = malloc(MAX_LEN * sizeof(char));
-    while (fgets(string, MAX_LEN, fp) != NULL) {
-      char *istr = strtok(string, " "); 
+    char string[MAX_LEN];
+    int new_input = 0; 
+    while (fgets(string, MAX_LEN, fp) != NULL) { 
+      char new_string[MAX_LEN];
+      strcpy(new_string, string);
+      char *istr = strtok(string, " ");
       char *second_word = strtok(NULL, " "); 
-      if (((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0))  || *isnt_empty == 0) {
-      fprintf(temp, "%s %s ", struct_type, struct_name);
+      if (new_input == 0) {
+          fprintf(temp, "%s %s ", struct_type, struct_name); 
         for (int i = 0; i < queue->size; i++) {
           fprintf(temp, "%s ", queue->head->data);
           queue->head = queue->head->next;
-        }
-        fprintf(temp, "\n");
-        if (*isnt_empty == 0) {
-          fprintf(temp, "%s", string);
-          *isnt_empty = 1;
-        }
-      } else {
-        fprintf(temp, "%s", string);
+            } 
+            fprintf(temp, "\n");
+            new_input = 1;
       }
-    }
-    free(string);
-    remove(filename);
-    rename("temp.txt", filename);
+      if ((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0)) {
+        continue;
+      }
+      else {         
+        fprintf(temp, "%s", new_string);
+      }
+          }  
+      remove(filename); 
+      rename("temp.txt", filename); 
   } else {
     ERROR;
   }

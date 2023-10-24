@@ -8,7 +8,6 @@
 #include "set.h"
 #include "stack.h"
 
-#define MAX_LEN 256
 #define TASK_FLAGS 2
 
 void request(char *db_file, char **query);
