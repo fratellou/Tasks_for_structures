@@ -20,6 +20,7 @@ int hash_calc(char *key);
 void HSET(HashTable *hashtable, char *key, char *value);
 char *HDEL(HashTable *hashtable, char *key);
 char *HGET(HashTable *hashtable, char *key);
+void hash_free(HashTable *hashtable);
 void write_hash(char *filename, HashTable *hashtable, char *struct_name, char *struct_type);
 
 #endif

@@ -25,7 +25,6 @@ void hash(char *db_file, char **query) {
   }
   hash_commands(query, hashtable);
   write_hash(db_file, hashtable, query[1], "hash:");
-  
 }
 
 void hash_commands(char **query, HashTable *hash) {
@@ -95,7 +94,7 @@ char *HDEL(HashTable *hashtable, char *key) {
     while (current != NULL) {
         if (strcmp(current->key, key) == 0) {
             char *element = current->element;
-            prev->next = current->next;
+            if (prev->next != NULL) prev->next = current->next;
             return element;
         }
         prev = current;
@@ -117,6 +116,24 @@ char *HGET(HashTable *hashtable, char *key) {
   return NULL; 
 }
 
+void hash_free(HashTable *hashtable) {
+  for (int i = 0; i < MAX_LEN; i++) {
+    if (hashtable->table[i] == NULL) continue;
+    else {
+      while (hashtable->table[i]->head != NULL) {
+        Node_hash *temp = hashtable->table[i]->head;
+        hashtable->table[i]->head = hashtable->table[i]->head->next;
+        free(temp->key);
+        free(temp->element);
+        free(temp);
+      }
+    }
+    free(hashtable->table[i]);
+  }
+  free(hashtable->table);
+  free(hashtable);
+}
+
 void write_hash(char *filename, HashTable *hashtable, char *struct_name, char *struct_type) {
   FILE *temp = fopen("temp.txt", "a+"); 
   FILE *fp = fopen(filename, "r"); 
@@ -133,11 +150,11 @@ void write_hash(char *filename, HashTable *hashtable, char *struct_name, char *s
           for (int i = 0; i < MAX_LEN; i++) {
             if (hashtable->table[i] == NULL) continue;
               Node_hash *current = hashtable->table[i]->head;
+              if (current->element == NULL || current->key == NULL) continue;
                while (current != NULL) {
                   fprintf(temp, "%s,%s ", current->key, current->element);
                   current = current->next;
                }
-                  //free(current);
           }
             fprintf(temp, "\n");
             new_input = 1;
