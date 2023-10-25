@@ -9,7 +9,7 @@ typedef struct Node_hash {
 } Node_hash;
 
 typedef struct HashTable {
-  Node_hash** table;
+  Node_hash **table;
   int size;
 } HashTable;
 
@@ -21,6 +21,7 @@ void HSET(HashTable *hashtable, char *key, char *value);
 char *HDEL(HashTable *hashtable, char *key);
 char *HGET(HashTable *hashtable, char *key);
 void hash_free(HashTable *hashtable);
-void write_hash(char *filename, HashTable *hashtable, char *struct_name, char *struct_type);
+void write_hash(char *filename, HashTable *hashtable, char *struct_name,
+                char *struct_type);
 
 #endif

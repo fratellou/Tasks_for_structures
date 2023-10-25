@@ -60,38 +60,39 @@ char *SPOP(Stack *stack) {
   }
 }
 
-void write_stack(char *filename, Stack *stack, char *struct_name, char *struct_type) { 
-  FILE *temp = fopen("temp.txt", "a+"); 
-  FILE *fp = fopen(filename, "r"); 
-  if (fp && temp) { 
+void write_stack(char *filename, Stack *stack, char *struct_name,
+                 char *struct_type) {
+  FILE *temp = fopen("temp.txt", "a+");
+  FILE *fp = fopen(filename, "r");
+  if (fp && temp) {
     char string[MAX_LEN];
-    int new_input = 0; 
-    while (fgets(string, MAX_LEN, fp) != NULL) { 
+    int new_input = 0;
+    while (fgets(string, MAX_LEN, fp) != NULL) {
       char new_string[MAX_LEN];
       strcpy(new_string, string);
       char *istr = strtok(string, " ");
-      char *second_word = strtok(NULL, " "); 
+      char *second_word = strtok(NULL, " ");
       if (new_input == 0) {
-          fprintf(temp, "%s %s ", struct_type, struct_name); 
-          for (int i = 0; i < stack->size; i++) { 
-            fprintf(temp, "%s ", stack->head->data);
-            stack->head = stack->head->next;
-            } 
-            fprintf(temp, "\n");
-            new_input = 1;
+        fprintf(temp, "%s %s ", struct_type, struct_name);
+        for (int i = 0; i < stack->size; i++) {
+          fprintf(temp, "%s ", stack->head->data);
+          stack->head = stack->head->next;
+        }
+        fprintf(temp, "\n");
+        new_input = 1;
       }
-      if ((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0)) {
+      if ((strcmp(istr, struct_type) == 0) &&
+          (strcmp(second_word, struct_name) == 0)) {
         continue;
-      }
-      else {         
+      } else {
         fprintf(temp, "%s", new_string);
       }
-          }  
-      remove(filename); 
-      rename("temp.txt", filename); 
-    } else { 
-      ERROR; 
-    } 
-    fclose(fp); 
-    fclose(temp); 
+    }
+    remove(filename);
+    rename("temp.txt", filename);
+  } else {
+    ERROR;
+  }
+  fclose(fp);
+  fclose(temp);
 }

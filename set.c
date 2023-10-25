@@ -20,7 +20,7 @@ void set(char *db_file, char **query) {
     }
   }
   set_commands(query, set);
-  //write_set(db_file, set, query[1], "set:");
+  // write_set(db_file, set, query[1], "set:");
 }
 
 void set_commands(char **query, Set *set) {
@@ -52,7 +52,8 @@ Set *createSet(int size) {
 
 void SADD(Set *set, char *element) {
   for (int i = 0; i < set->size; i++) {
-    if (set->buckets[i] != NULL && strcmp(set->buckets[i]->element, element) == 0) {
+    if (set->buckets[i] != NULL &&
+        strcmp(set->buckets[i]->element, element) == 0) {
       ERROR;
       return;
     }
@@ -67,7 +68,8 @@ void SADD(Set *set, char *element) {
 char *SREM(Set *set, char *element) {
   int index;
   for (index = 0; index < set->size; index++) {
-    if (set->buckets[index] != NULL && strcmp(set->buckets[index]->element, element) == 0) {
+    if (set->buckets[index] != NULL &&
+        strcmp(set->buckets[index]->element, element) == 0) {
       char *value = set->buckets[index]->element;
       if (index == 0) {
         set->buckets[index] = set->buckets[index]->next;
@@ -83,7 +85,8 @@ char *SREM(Set *set, char *element) {
 int SISMEMBER(Set *set, char *element) {
   int index;
   for (index = 0; index < set->size; index++) {
-    if (set->buckets[index] != NULL && strcmp(set->buckets[index]->element, element) == 0) {
+    if (set->buckets[index] != NULL &&
+        strcmp(set->buckets[index]->element, element) == 0) {
       return 1;
     }
   }
@@ -110,7 +113,8 @@ void write_set(char *filename, Set *set, char *struct_name, char *struct_type) {
         fprintf(temp, "\n");
         new_input = 1;
       }
-      if ((strcmp(istr, struct_type) == 0) && (strcmp(second_word, struct_name) == 0)) {
+      if ((strcmp(istr, struct_type) == 0) &&
+          (strcmp(second_word, struct_name) == 0)) {
         continue;
       } else {
         fprintf(temp, "%s", new_string);
