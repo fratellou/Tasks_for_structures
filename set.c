@@ -22,12 +22,17 @@ void set(char *db_file, char **query) {
   }
   set_commands(query, set);
   write_set(db_file, set, query[1], "set:");
+  free_set(set);
+    for (int i = 0; i <= size; i++) {
+    free(line[i]);
+  }
+  free(line);
 }
 
 void set_commands(char **query, Set *set) {
   if (!strcmp(query[0], "SADD")) {
-    SADD(set, query[2]);
-    printf("-> %s\n", query[2]);
+    char *value = SADD(set, query[2]);
+    printf("-> %s\n", value);
   } else if (!strcmp(query[0], "SREM")) {
     char *value = SREM(set, query[2]);
     printf("-> %s\n", value);
@@ -59,15 +64,16 @@ int set_calc(char *key) {
   return hash % MAX_LEN;
 }
 
-void SADD(Set *set, char *element) {
+char* SADD(Set *set, char *element) {
   int index = set_calc(element);
   if (set->buckets[index] != NULL) {
     ERROR;
-    return;
+    return NULL;
   }
   Node_set *newNode = (Node_set *)malloc(sizeof(Node_set));
   newNode->element = element;
   set->buckets[index] = newNode;
+  return element;
 }
 
 char *SREM(Set *set, char *element) {
@@ -124,4 +130,17 @@ void write_set(char *filename, Set *set, char *struct_name, char *struct_type) {
   }
   fclose(fp);
   fclose(temp);
+}
+
+void free_set(Set *set) {
+  if (set == NULL) {
+    return;
+  }
+ for (int i = 0; i < set->size; i++) {
+    if (set->buckets[i] != NULL) {
+      free(set->buckets[i]);
+    }
+  }
+  free(set->buckets);
+  free(set);
 }

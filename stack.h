@@ -17,5 +17,6 @@ void SPUSH(Stack *stack, char *element);
 char *SPOP(Stack *stack);
 void write_stack(char *filename, Stack *stack, char *struct_name,
                  char *struct_type);
+void free_stack(Stack *stack);
 
 #endif

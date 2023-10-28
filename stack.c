@@ -20,7 +20,6 @@ void stack(char *db_file, char **query) {
   }
   stack_commands(query, &stack);
   write_stack(db_file, &stack, query[1], "stack:");
-
   for (int i = 0; i <= stack.size; i++) {
     free(line[i]);
   }
@@ -76,7 +75,9 @@ void write_stack(char *filename, Stack *stack, char *struct_name,
         fprintf(temp, "%s %s ", struct_type, struct_name);
         for (int i = 0; i < stack->size; i++) {
           fprintf(temp, "%s ", stack->head->data);
+          Node *temp_node = stack->head;
           stack->head = stack->head->next;
+          free(temp_node->data);
         }
         fprintf(temp, "\n");
         new_input = 1;

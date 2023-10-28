@@ -1,7 +1,7 @@
 hash: struct2 
-queue: struct2 
+set: struct2 val key val2 
+queue: struct2 val 
 stack: struct2 
-set: struct2 val key 
 set: struct3 val 
  
  
