@@ -6,7 +6,6 @@
 
 #include "macro.h"
 
-
 void set(char *db_file, char **query) {
   char **line = malloc(
       MAX_LEN * sizeof(char *)); // Строка в файле, содержащая записи структуры
@@ -23,7 +22,7 @@ void set(char *db_file, char **query) {
   set_commands(query, set);
   write_set(db_file, set, query[1], "set:");
   free_set(set);
-    for (int i = 0; i <= size; i++) {
+  for (int i = 0; i <= size; i++) {
     free(line[i]);
   }
   free(line);
@@ -64,7 +63,7 @@ int set_calc(char *key) {
   return hash % MAX_LEN;
 }
 
-char* SADD(Set *set, char *element) {
+char *SADD(Set *set, char *element) {
   int index = set_calc(element);
   if (set->buckets[index] != NULL) {
     ERROR;
@@ -90,7 +89,8 @@ char *SREM(Set *set, char *element) {
 
 int SISMEMBER(Set *set, char *element) {
   int index = set_calc(element);
-  if (set->buckets[index] == NULL) return 0;
+  if (set->buckets[index] == NULL)
+    return 0;
   if (strcmp(set->buckets[index]->element, element) == 0) {
     return 1;
   }
@@ -111,7 +111,8 @@ void write_set(char *filename, Set *set, char *struct_name, char *struct_type) {
       if (new_input == 0) {
         fprintf(temp, "%s %s ", struct_type, struct_name);
         for (int i = 0; i < MAX_LEN; i++) {
-          if (set->buckets[i] != NULL) fprintf(temp, "%s ", set->buckets[i]->element); 
+          if (set->buckets[i] != NULL)
+            fprintf(temp, "%s ", set->buckets[i]->element);
         }
         fprintf(temp, "\n");
         new_input = 1;
@@ -136,7 +137,7 @@ void free_set(Set *set) {
   if (set == NULL) {
     return;
   }
- for (int i = 0; i < set->size; i++) {
+  for (int i = 0; i < set->size; i++) {
     if (set->buckets[i] != NULL) {
       free(set->buckets[i]);
     }

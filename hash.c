@@ -31,7 +31,8 @@ void hash(char *db_file, char **query) {
 
 void hash_commands(char **query, HashTable *hash) {
   if (!strcmp(query[0], "HSET")) {
-    char *value = HSET(hash, query[2], query[3]);;
+    char *value = HSET(hash, query[2], query[3]);
+    ;
     printf("-> %s\n", value);
   } else if (!strcmp(query[0], "HDEL")) {
     char *value = HDEL(hash, query[2]);
@@ -136,7 +137,8 @@ void write_hash(char *filename, HashTable *hashtable, char *struct_name,
         fprintf(temp, "%s %s ", struct_type, struct_name);
         for (int i = 0; i < hashtable->size; i++) {
           Node_hash *current = hashtable->table[i];
-          if (hashtable->table[i] == NULL || current->element == NULL || current->key == NULL)
+          if (hashtable->table[i] == NULL || current->element == NULL ||
+              current->key == NULL)
             continue;
           while (current != NULL) {
             fprintf(temp, "%s,%s ", current->key, current->element);
