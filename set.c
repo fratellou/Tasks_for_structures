@@ -6,6 +6,7 @@
 
 #include "macro.h"
 
+
 void set(char *db_file, char **query) {
   char **line = malloc(
       MAX_LEN * sizeof(char *)); // Строка в файле, содержащая записи структуры
@@ -20,7 +21,7 @@ void set(char *db_file, char **query) {
     }
   }
   set_commands(query, set);
-  // write_set(db_file, set, query[1], "set:");
+  write_set(db_file, set, query[1], "set:");
 }
 
 void set_commands(char **query, Set *set) {
@@ -32,9 +33,9 @@ void set_commands(char **query, Set *set) {
     printf("-> %s\n", value);
   } else if (!strcmp(query[0], "SISMEMBER")) {
     if (!SISMEMBER(set, query[2]))
-      printf("\n-> FALSE");
+      printf("\n-> FALSE\n");
     else
-      printf("\n-> TRUE");
+      printf("\n-> TRUE\n");
   } else {
     ERROR;
   }
@@ -43,52 +44,49 @@ void set_commands(char **query, Set *set) {
 Set *createSet(int size) {
   Set *set = (Set *)malloc(sizeof(Set));
   set->size = size;
-  set->buckets = malloc(sizeof(Node_set *) * size);
+  set->buckets = malloc(sizeof(Node_set **) * size);
   for (int i = 0; i < size; i++) {
     set->buckets[i] = NULL;
   }
   return set;
 }
 
+int set_calc(char *key) {
+  int hash = 0;
+  for (int i = 0; i < (int)strlen(key); i++) {
+    hash += (int)key[i];
+  }
+  return hash % MAX_LEN;
+}
+
 void SADD(Set *set, char *element) {
-  for (int i = 0; i < set->size; i++) {
-    if (set->buckets[i] != NULL &&
-        strcmp(set->buckets[i]->element, element) == 0) {
-      ERROR;
-      return;
-    }
+  int index = set_calc(element);
+  if (set->buckets[index] != NULL) {
+    ERROR;
+    return;
   }
   Node_set *newNode = (Node_set *)malloc(sizeof(Node_set));
-  newNode->element = strdup(element);
-  newNode->next = set->buckets[set->size];
-  set->buckets[set->size] = newNode;
-  set->size++;
+  newNode->element = element;
+  set->buckets[index] = newNode;
 }
 
 char *SREM(Set *set, char *element) {
-  int index;
-  for (index = 0; index < set->size; index++) {
-    if (set->buckets[index] != NULL &&
-        strcmp(set->buckets[index]->element, element) == 0) {
-      char *value = set->buckets[index]->element;
-      if (index == 0) {
-        set->buckets[index] = set->buckets[index]->next;
-      } else {
-        set->buckets[index - 1]->next = set->buckets[index]->next;
-      }
-      return value;
-    }
+  int index = set_calc(element);
+  if (set->buckets[index] == NULL) {
+    return NULL;
+  } else {
+    char *element = set->buckets[index]->element;
+    set->buckets[index] = NULL;
+    return element;
   }
   return NULL;
 }
 
 int SISMEMBER(Set *set, char *element) {
-  int index;
-  for (index = 0; index < set->size; index++) {
-    if (set->buckets[index] != NULL &&
-        strcmp(set->buckets[index]->element, element) == 0) {
-      return 1;
-    }
+  int index = set_calc(element);
+  if (set->buckets[index] == NULL) return 0;
+  if (strcmp(set->buckets[index]->element, element) == 0) {
+    return 1;
   }
   return 0;
 }
@@ -106,9 +104,8 @@ void write_set(char *filename, Set *set, char *struct_name, char *struct_type) {
       char *second_word = strtok(NULL, " ");
       if (new_input == 0) {
         fprintf(temp, "%s %s ", struct_type, struct_name);
-        for (int i = 0; i < set->size; i++) {
-          if (set->buckets[i] != NULL && set->buckets[i]->element != NULL)
-            fprintf(temp, "%s ", set->buckets[i]->element);
+        for (int i = 0; i < MAX_LEN; i++) {
+          if (set->buckets[i] != NULL) fprintf(temp, "%s ", set->buckets[i]->element); 
         }
         fprintf(temp, "\n");
         new_input = 1;

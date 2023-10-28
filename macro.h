@@ -1,7 +1,7 @@
 #ifndef MACRO_H
 #define MACRO_H
 
-#define MAX_LEN 50
+#define MAX_LEN 256
 #ifndef ERROR
 #define ERROR printf("n/a\n");
 #endif

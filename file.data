@@ -1,5 +1,10 @@
-set: struct8 val5 
-set: struct7 val3 
-set: struct6 val 
-set: struct5 val1 
-hash: struct4 key,val2 key3,val2 key3,val 
+hash: struct2 
+queue: struct2 
+stack: struct2 
+set: struct2 val key 
+set: struct3 val 
+ 
+ 
+ 
+
+

@@ -3,7 +3,6 @@
 
 typedef struct Node_set {
   char *element;
-  struct Node_set *next;
 } Node_set;
 
 typedef struct Set {
@@ -14,6 +13,7 @@ typedef struct Set {
 void set(char *db_file, char **query);
 void set_commands(char **query, Set *set);
 Set *createSet(int size);
+int set_calc(char *key);
 void SADD(Set *set, char *element);
 char *SREM(Set *set, char *element);
 int SISMEMBER(Set *set, char *element);
