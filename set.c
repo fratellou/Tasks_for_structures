@@ -66,34 +66,47 @@ int set_calc(char *key) {
 char *SADD(Set *set, char *element) {
   int index = set_calc(element);
   if (set->buckets[index] != NULL) {
-    ERROR;
-    return NULL;
+    set->buckets[index]->element = element;
+    return element;
   }
   Node_set *newNode = (Node_set *)malloc(sizeof(Node_set));
   newNode->element = element;
+  newNode->next = set->buckets[index];
   set->buckets[index] = newNode;
   return element;
 }
 
 char *SREM(Set *set, char *element) {
   int index = set_calc(element);
-  if (set->buckets[index] == NULL) {
-    return NULL;
-  } else {
-    char *element = set->buckets[index]->element;
-    set->buckets[index] = NULL;
-    return element;
+  Node_set *current = set->buckets[index];
+  Node_set *previous = NULL;
+  while (current != NULL) {
+    if (strcmp(current->element, element) == 0) {
+      if (previous != NULL) {
+        previous->next = current->next;
+      } else {
+        set->buckets[index] = current->next;
+      }
+      char *element = current->element;
+      free(current);
+      return element;
+    }
+    previous = current;
+    current = current->next;
   }
   return NULL;
 }
 
 int SISMEMBER(Set *set, char *element) {
   int index = set_calc(element);
-  if (set->buckets[index] == NULL)
-    return 0;
-  if (strcmp(set->buckets[index]->element, element) == 0) {
-    return 1;
+  Node_set *current = set->buckets[index];
+  while (current != NULL) {
+    if (strcmp(current->element, element) == 0) {
+      return 1;
+    }
+    current = current->next;
   }
+  
   return 0;
 }
 
@@ -111,8 +124,9 @@ void write_set(char *filename, Set *set, char *struct_name, char *struct_type) {
       if (new_input == 0) {
         fprintf(temp, "%s %s ", struct_type, struct_name);
         for (int i = 0; i < MAX_LEN; i++) {
-          if (set->buckets[i] != NULL)
+          if (set->buckets[i] != NULL) {
             fprintf(temp, "%s ", set->buckets[i]->element);
+          }
         }
         fprintf(temp, "\n");
         new_input = 1;

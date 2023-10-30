@@ -7,6 +7,7 @@
 #include "queue.h"
 #include "set.h"
 #include "stack.h"
+#include "double_set.h"
 
 #define TASK_FLAGS 2
 
@@ -63,6 +64,10 @@ void request(char *db_file, char **query) {
   } else if (!strcmp(query[0], "HSET") || !strcmp(query[0], "HDEL") ||
              !strcmp(query[0], "HGET")) {
     hash(db_file, query);
-  } else
+  } else if (!strcmp(query[0], "DSADD") || !strcmp(query[0], "DSREM") ||
+      !strcmp(query[0], "DSISMEMBER")) {
+    Dset(db_file, query);
+  }
+  else
     ERROR;
 }

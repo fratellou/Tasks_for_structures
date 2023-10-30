@@ -3,6 +3,7 @@
 
 typedef struct Node_set {
   char *element;
+  struct Node_set *next;
 } Node_set;
 
 typedef struct Set {
