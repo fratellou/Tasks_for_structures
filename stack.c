@@ -8,7 +8,7 @@
 
 void stack(char *db_file, char **query) {
   char **line = malloc(
-      MAX_LEN * sizeof(char *)); //Строка в файле, содержащая записи структуры
+      MAX_LEN * sizeof(char *)); 
   int isnt_empty = 0;
   int size = 0;
   Stack stack = {NULL, 0};
@@ -20,7 +20,7 @@ void stack(char *db_file, char **query) {
   }
   stack_commands(query, &stack);
   write_stack(db_file, &stack, query[1], "stack:");
-  for (int i = 0; i <= stack.size; i++) {
+  for (int i = 0; i < stack.size; i++) {
     free(line[i]);
   }
   free(line);
@@ -38,7 +38,7 @@ void stack_commands(char **query, Stack *stack) {
 
 void SPUSH(Stack *stack, char *element) {
   Node *node = malloc(sizeof(Node));
-  node->data = element;
+  node->data = strdup(element);
   if (stack->head == NULL) {
     stack->head = node;
   } else {

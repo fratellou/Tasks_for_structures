@@ -8,7 +8,7 @@
 
 void queue(char *db_file, char **query) {
   char **line = malloc(
-      MAX_LEN * sizeof(char *)); //Строка в файле, содержащая записи структуры
+      MAX_LEN * sizeof(char *)); 
   int isnt_empty = 0;
   int size = 0;
   Queue queue = {NULL, NULL, 0};
@@ -20,7 +20,7 @@ void queue(char *db_file, char **query) {
   }
   queue_commands(query, &queue);
   write_queue(db_file, &queue, query[1], "queue:");
-  for (int i = 0; i <= queue.size; i++) {
+  for (int i = 0; i < queue.size; i++) {
     free(line[i]);
   }
   free(line);
@@ -38,7 +38,7 @@ void queue_commands(char **query, Queue *queue) {
 
 void QPUSH(Queue *queue, char *element) {
   Node_que *node = malloc(sizeof(Node_que));
-  node->data = element;
+  node->data = strdup(element);
   if (queue->head == NULL) {
     queue->head = node;
     queue->tail = node;

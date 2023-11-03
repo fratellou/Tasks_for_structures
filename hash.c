@@ -9,7 +9,7 @@
 void hash(char *db_file, char **query) {
 
   char **line = malloc(
-      MAX_LEN * sizeof(char *)); //Строка в файле, содержащая записи структуры
+      MAX_LEN * sizeof(char *)); 
   int isnt_empty = 0;
   int size = 0;
   HashTable *hashtable = createHashTable(MAX_LEN);
@@ -31,15 +31,11 @@ void hash(char *db_file, char **query) {
 
 void hash_commands(char **query, HashTable *hash) {
   if (!strcmp(query[0], "HSET")) {
-    char *value = HSET(hash, query[2], query[3]);
-    ;
-    printf("-> %s\n", value);
+    printf("-> %s\n", HSET(hash, query[2], query[3]));
   } else if (!strcmp(query[0], "HDEL")) {
-    char *value = HDEL(hash, query[2]);
-    printf("-> %s\n", value);
+    printf("-> %s\n", HDEL(hash, query[2]));
   } else if (!strcmp(query[0], "HGET")) {
-    char *value = HGET(hash, query[2]);
-    printf("-> %s\n", value);
+    printf("-> %s\n", HGET(hash, query[2]));
   } else {
     ERROR;
   }

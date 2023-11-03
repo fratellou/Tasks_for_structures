@@ -1,4 +1,14 @@
+tree: struct20 
+tree: struct2 256 11 2 1 1 2 2 2 2 2 2 2 12 13 14 15 20 
+tree: struct5 
+tree: struct4 
+tree: struct3 
+arr: struct2 100 10 0 1 
 dset: struct2 key 
-set: struct2 value 
-hash: struct2 
+set: struct2 key key2 key5 
+hash: struct2 key,val key1,val1 key2,val2 key2,val key5,val20 
+queue: struct 
+stack: struct 
+set: struct val2 val3 
+hash: struct key,val 
 

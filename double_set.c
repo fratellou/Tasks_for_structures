@@ -8,7 +8,7 @@
 
 void Dset(char *db_file, char **query) {
   char **line = malloc(
-      MAX_LEN * sizeof(char *)); // Строка в файле, содержащая записи структуры
+      MAX_LEN * sizeof(char *)); 
   int size = 0;
   int isnt_empty = 0;
   DSet *set = createDSet(MAX_LEN);
@@ -21,7 +21,7 @@ void Dset(char *db_file, char **query) {
   Dset_commands(query, set);
   write_Dset(db_file, set, query[1], "dset:");
   free_Dset(set);
-  for (int i = 0; i <= size; i++) {
+  for (int i = 0; i < size; i++) {
     free(line[i]);
   }
   free(line);
@@ -29,11 +29,9 @@ void Dset(char *db_file, char **query) {
 
 void Dset_commands(char **query, DSet *set) {
   if (!strcmp(query[0], "DSADD")) {
-    char *value = DSADD(set, query[2]);
-    printf("-> %s\n", value);
+    printf("-> %s\n", DSADD(set, query[2]));
   } else if (!strcmp(query[0], "DSREM")) {
-    char *value = DSREM(set, query[2]);
-    printf("-> %s\n", value);
+    printf("-> %s\n", DSREM(set, query[2]));
   } else if (!strcmp(query[0], "DSISMEMBER")) {
     if (!DSISMEMBER(set, query[2]))
       printf("\n-> FALSE\n");

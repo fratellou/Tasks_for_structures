@@ -8,7 +8,7 @@
 
 void set(char *db_file, char **query) {
   char **line = malloc(
-      MAX_LEN * sizeof(char *)); // Строка в файле, содержащая записи структуры
+      MAX_LEN * sizeof(char *)); 
   int size = 0;
   int isnt_empty = 0;
 
@@ -22,7 +22,7 @@ void set(char *db_file, char **query) {
   set_commands(query, set);
   write_set(db_file, set, query[1], "set:");
   free_set(set);
-  for (int i = 0; i <= size; i++) {
+  for (int i = 0; i < size; i++) {
     free(line[i]);
   }
   free(line);
@@ -30,11 +30,9 @@ void set(char *db_file, char **query) {
 
 void set_commands(char **query, Set *set) {
   if (!strcmp(query[0], "SADD")) {
-    char *value = SADD(set, query[2]);
-    printf("-> %s\n", value);
+    printf("-> %s\n", SADD(set, query[2]));
   } else if (!strcmp(query[0], "SREM")) {
-    char *value = SREM(set, query[2]);
-    printf("-> %s\n", value);
+    printf("-> %s\n", SREM(set, query[2]));
   } else if (!strcmp(query[0], "SISMEMBER")) {
     if (!SISMEMBER(set, query[2]))
       printf("\n-> FALSE\n");
@@ -66,8 +64,8 @@ int set_calc(char *key) {
 char *SADD(Set *set, char *element) {
   int index = set_calc(element);
   if (set->buckets[index] != NULL) {
-    set->buckets[index]->element = element;
-    return element;
+    ERROR;
+    return NULL;
   }
   Node_set *newNode = (Node_set *)malloc(sizeof(Node_set));
   newNode->element = element;
