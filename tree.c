@@ -6,6 +6,7 @@
 
 #include "macro.h"
 
+// This function is responsible for managing the operations on the tree
 void tree(char *db_file, char **query) {
   char **line = malloc(
       MAX_LEN * sizeof(char *)); 
@@ -15,12 +16,14 @@ void tree(char *db_file, char **query) {
   Node_tree *root = NULL;
   STRUCT(line, db_file, isnt_empty, query[1], size, "tree:");
   if (isnt_empty) {
+    // Looping over the line array to insert the keys into the tree
     for (int i = 1; i < size; i++) {
       root = TADD(root, atoi(line[i]));
     }
   }
   tree_commands(query, &root);
   printTree(root, 0);
+  // Writing the tree back to the database file
   write_tree(db_file, &root, query[1], "tree:");
   freeTree(root);
   for (int i = 0; i < size; i++) {
@@ -29,6 +32,7 @@ void tree(char *db_file, char **query) {
   free(line);
 }
 
+// This function handles the various commands that can be executed on the tree
 void tree_commands(char **query, Node_tree **root) {
   if (!strcmp(query[0], "TADD")) {
       *root = TADD(*root, atoi(query[2]));
@@ -45,6 +49,7 @@ void tree_commands(char **query, Node_tree **root) {
   }
 }
 
+// This function creates a new tree node with the given key
 Node_tree *createTree(int key) {
     Node_tree *tmp = malloc(sizeof(Node_tree));
     tmp->key = key;
@@ -54,14 +59,18 @@ Node_tree *createTree(int key) {
     return tmp;
 }
 
+// This function inserts a new node with the given key into the tree
 Node_tree *TADD(Node_tree *root, int key) {
+  // If the tree is empty, create a new node and return it
     if (root == NULL) return createTree(key);
+
     Node_tree *root2 = root, *root3 = NULL;
     Node_tree *tmp = malloc(sizeof(Node_tree));
     tmp->key = key;  
      tmp->parent = NULL;
     tmp->left = NULL;
     tmp->right = NULL;
+    // Traversing the tree to find the appropriate position to insert the new node
     while (root2 != NULL)
     {
         root3 = root2;
@@ -79,6 +88,7 @@ Node_tree *TADD(Node_tree *root, int key) {
     return root;
 }
 
+// This function searches for a node in the tree with the given key
 Node_tree* TSRCH(Node_tree* root, int data) {
     if (root == NULL || root->key == data) {
         return root;                 
@@ -91,12 +101,14 @@ Node_tree* TSRCH(Node_tree* root, int data) {
     }
 }
 
+// This function returns the successor of a given node in the tree
 Node_tree *succ(Node_tree *root)
 {
     Node_tree *p = root, *l = NULL;
     if (p->right != NULL)
         return min(p->right);
     l = p->parent;
+    // Traversing up the tree to find the successor
     while ((l != NULL) && (p == l->right))
     {
         p = l;
@@ -105,14 +117,17 @@ Node_tree *succ(Node_tree *root)
     return l;
 }
 
+// This function returns the minimum value node in the tree
 Node_tree *min(Node_tree *root)
 {
     Node_tree *l = root;
+    // Traversing down the left subtree to find the minimum value
     while (l->left != NULL)
         l = l->left;
     return l;
 }
 
+// Deletes a node with the specified data from a binary search tree
 Node_tree* TDEL(Node_tree* root, int data) {
     Node_tree *l = NULL, *m = NULL;
     l = TSRCH(root, data);
@@ -150,6 +165,7 @@ Node_tree* TDEL(Node_tree* root, int data) {
     return root;
 }
 
+// Prints the contents of a binary tree in preorder traversal to a file
 void printTree_in_file(Node_tree* root, FILE *file) {
     if (root != NULL) {
       if (root->key) {
@@ -160,6 +176,7 @@ void printTree_in_file(Node_tree* root, FILE *file) {
     } 
 }
 
+// Prints the contents of a binary tree in a structured format
 void printTree(Node_tree *tree, int space) {
     if (tree == NULL) {
         return;
@@ -174,6 +191,7 @@ void printTree(Node_tree *tree, int space) {
     printTree(tree->left, space);
 }
 
+// Frees the memory allocated for a binary tree
 void freeTree(Node_tree *node) {
     if (node == NULL) {
         return;
@@ -185,6 +203,7 @@ void freeTree(Node_tree *node) {
     free(node);
 }
 
+// Writes the contents of a binary tree to a file
 void write_tree(char *filename, Node_tree **root, char *struct_name, char *struct_type) {
   FILE *temp = fopen("temp.txt", "a+");
   FILE *fp = fopen(filename, "r");

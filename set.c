@@ -6,6 +6,7 @@
 
 #include "macro.h"
 
+// This function implements the set operation
 void set(char *db_file, char **query) {
   char **line = malloc(
       MAX_LEN * sizeof(char *)); 
@@ -28,6 +29,7 @@ void set(char *db_file, char **query) {
   free(line);
 }
 
+//Executes the set commands based on the given query
 void set_commands(char **query, Set *set) {
   if (!strcmp(query[0], "SADD")) {
     printf("-> %s\n", SADD(set, query[2]));
@@ -43,6 +45,7 @@ void set_commands(char **query, Set *set) {
   }
 }
 
+//Creates and initializes a new set data structure
 Set *createSet(int size) {
   Set *set = (Set *)malloc(sizeof(Set));
   set->size = size;
@@ -53,6 +56,7 @@ Set *createSet(int size) {
   return set;
 }
 
+//Calculates the hash value for a given key
 int set_calc(char *key) {
   int hash = 0;
   for (int i = 0; i < (int)strlen(key); i++) {
@@ -61,6 +65,7 @@ int set_calc(char *key) {
   return hash % MAX_LEN;
 }
 
+//Adds an element to the set
 char *SADD(Set *set, char *element) {
   int index = set_calc(element);
   if (set->buckets[index] != NULL) {
@@ -74,6 +79,7 @@ char *SADD(Set *set, char *element) {
   return element;
 }
 
+//Removes an element from the set
 char *SREM(Set *set, char *element) {
   int index = set_calc(element);
   Node_set *current = set->buckets[index];
@@ -95,6 +101,7 @@ char *SREM(Set *set, char *element) {
   return NULL;
 }
 
+//Checks if an element is a member of the set
 int SISMEMBER(Set *set, char *element) {
   int index = set_calc(element);
   Node_set *current = set->buckets[index];
@@ -108,6 +115,7 @@ int SISMEMBER(Set *set, char *element) {
   return 0;
 }
 
+//Writes the updated set data structure to the database file
 void write_set(char *filename, Set *set, char *struct_name, char *struct_type) {
   FILE *temp = fopen("temp.txt", "a+");
   FILE *fp = fopen(filename, "r");
@@ -145,6 +153,7 @@ void write_set(char *filename, Set *set, char *struct_name, char *struct_type) {
   fclose(temp);
 }
 
+//Frees the memory allocated for the set data structure
 void free_set(Set *set) {
   if (set == NULL) {
     return;

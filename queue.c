@@ -6,6 +6,7 @@
 
 #include "macro.h"
 
+// This function implements the queue operation
 void queue(char *db_file, char **query) {
   char **line = malloc(
       MAX_LEN * sizeof(char *)); 
@@ -26,6 +27,7 @@ void queue(char *db_file, char **query) {
   free(line);
 }
 
+// Process the queue commands specified in the query
 void queue_commands(char **query, Queue *queue) {
   if (!strcmp(query[0], "QPUSH")) {
     QPUSH(queue, query[2]);
@@ -36,9 +38,12 @@ void queue_commands(char **query, Queue *queue) {
     ERROR;
 }
 
+// Push an element into the queue
 void QPUSH(Queue *queue, char *element) {
   Node_que *node = malloc(sizeof(Node_que));
   node->data = strdup(element);
+
+  // If the queue is empty, set the new node as both head and tail
   if (queue->head == NULL) {
     queue->head = node;
     queue->tail = node;
@@ -49,6 +54,7 @@ void QPUSH(Queue *queue, char *element) {
   queue->size++;
 }
 
+// Pop an element from the queue
 char *QPOP(Queue *queue) {
   if (queue->head == NULL) {
     return NULL;
@@ -60,6 +66,7 @@ char *QPOP(Queue *queue) {
   }
 }
 
+// Write the elements in the queue back to the database file
 void write_queue(char *filename, Queue *queue, char *struct_name,
                  char *struct_type) {
   FILE *temp = fopen("temp.txt", "w+");

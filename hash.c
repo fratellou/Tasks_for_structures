@@ -6,6 +6,7 @@
 
 #include "macro.h"
 
+// This function implements the hash operation
 void hash(char *db_file, char **query) {
 
   char **line = malloc(
@@ -29,6 +30,7 @@ void hash(char *db_file, char **query) {
   destroyHashTable(hashtable);
 }
 
+// Function to perform hash commands
 void hash_commands(char **query, HashTable *hash) {
   if (!strcmp(query[0], "HSET")) {
     printf("-> %s\n", HSET(hash, query[2], query[3]));
@@ -41,6 +43,7 @@ void hash_commands(char **query, HashTable *hash) {
   }
 }
 
+// Function to create a new hash table
 HashTable *createHashTable(int size) {
   HashTable *ht = (HashTable *)malloc(sizeof(HashTable));
   ht->size = size;
@@ -51,6 +54,7 @@ HashTable *createHashTable(int size) {
   return ht;
 }
 
+// Function to calculate the hash value for a given key
 int hash_calc(char *key) {
   int hash = 0;
   for (int i = 0; i < (int)strlen(key); i++) {
@@ -59,6 +63,7 @@ int hash_calc(char *key) {
   return hash % MAX_LEN;
 }
 
+// Function to insert or update a key-value pair in the hash table
 char *HSET(HashTable *hashtable, char *key, char *value) {
   int index = hash_calc(key) % hashtable->size;
   Node_hash *newNode = (Node_hash *)malloc(sizeof(Node_hash));
@@ -81,6 +86,7 @@ char *HSET(HashTable *hashtable, char *key, char *value) {
   return value;
 }
 
+// Function to delete a key-value pair from the hash table
 char *HDEL(HashTable *hashtable, char *key) {
   int index = hash_calc(key);
   if (hashtable->table[index] == NULL) {
@@ -105,6 +111,7 @@ char *HDEL(HashTable *hashtable, char *key) {
   return NULL;
 }
 
+//Retrieves an element from the hash table based on the provided key
 char *HGET(HashTable *hashtable, char *key) {
   int index = hash_calc(key);
   Node_hash *current = hashtable->table[index];
@@ -117,6 +124,7 @@ char *HGET(HashTable *hashtable, char *key) {
   return NULL;
 }
 
+//Writes the contents of the hash table to a file
 void write_hash(char *filename, HashTable *hashtable, char *struct_name,
                 char *struct_type) {
   FILE *temp = fopen("temp.txt", "a+");
@@ -160,6 +168,7 @@ void write_hash(char *filename, HashTable *hashtable, char *struct_name,
   fclose(temp);
 }
 
+//Frees the memory used by the hash table and its elements
 void destroyHashTable(HashTable *hashtable) {
   for (int i = 0; i < hashtable->size; i++) {
     Node_hash *current = hashtable->table[i];

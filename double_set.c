@@ -6,6 +6,7 @@
 
 #include "macro.h"
 
+// This function implements the double linked set operation
 void Dset(char *db_file, char **query) {
   char **line = malloc(
       MAX_LEN * sizeof(char *)); 
@@ -27,6 +28,7 @@ void Dset(char *db_file, char **query) {
   free(line);
 }
 
+//This function takes a query and a double linked set object as parameters and executes the command specified in the query
 void Dset_commands(char **query, DSet *set) {
   if (!strcmp(query[0], "DSADD")) {
     printf("-> %s\n", DSADD(set, query[2]));
@@ -42,6 +44,7 @@ void Dset_commands(char **query, DSet *set) {
   }
 }
 
+//This function creates a new double linked set 
 DSet *createDSet(int size) {
   DSet *set = (DSet *)malloc(sizeof(DSet));
   set->size = size;
@@ -52,6 +55,7 @@ DSet *createDSet(int size) {
   return set;
 }
 
+// This function calculates the hash value for a given key
 int Dset_calc(char *key) {
   int hash = 0;
   for (int i = 0; i < (int)strlen(key); i++) {
@@ -60,6 +64,7 @@ int Dset_calc(char *key) {
   return hash % MAX_LEN;
 }
 
+//This function adds an element to the double linked set
 char *DSADD(DSet *set, char *element) {
   int index = Dset_calc(element);
   if (set->buckets[index] != NULL) {
@@ -77,6 +82,7 @@ set->buckets[index] = newNode;
 return element;
 }
 
+//This function removes an element from the double linked set
 char *DSREM(DSet *set, char *element) {
   int index = Dset_calc(element);
   if (set->buckets[index] == NULL) {
@@ -97,6 +103,7 @@ char *DSREM(DSet *set, char *element) {
   return NULL;
 }
 
+//This function checks if an element is a member of the double linked set
 int DSISMEMBER(DSet *set, char *element) {
   int index = Dset_calc(element);
   if (set->buckets[index] == NULL)
@@ -107,6 +114,7 @@ int DSISMEMBER(DSet *set, char *element) {
   return 0;
 }
 
+//This function writes the contents of the double linked set to a file
 void write_Dset(char *filename, DSet *set, char *struct_name, char *struct_type) {
   FILE *temp = fopen("temp.txt", "a+");
   FILE *fp = fopen(filename, "r");
@@ -143,6 +151,7 @@ void write_Dset(char *filename, DSet *set, char *struct_name, char *struct_type)
   fclose(temp);
 }
 
+//This function frees the memory allocated for the double linked set object and its buckets
 void free_Dset(DSet *set) {
   if (set == NULL) {
     return;

@@ -6,6 +6,7 @@
 
 #include "macro.h"
 
+// This function implements the stack operation
 void stack(char *db_file, char **query) {
   char **line = malloc(
       MAX_LEN * sizeof(char *)); 
@@ -19,6 +20,7 @@ void stack(char *db_file, char **query) {
     }
   }
   stack_commands(query, &stack);
+  // Write the stack elements back to the database file
   write_stack(db_file, &stack, query[1], "stack:");
   for (int i = 0; i < stack.size; i++) {
     free(line[i]);
@@ -26,6 +28,7 @@ void stack(char *db_file, char **query) {
   free(line);
 }
 
+// This function performs stack commands based on the query
 void stack_commands(char **query, Stack *stack) {
   if (!strcmp(query[0], "SPUSH")) {
     SPUSH(stack, query[2]);
@@ -36,6 +39,7 @@ void stack_commands(char **query, Stack *stack) {
     ERROR;
 }
 
+// This function pushes an element onto the stack
 void SPUSH(Stack *stack, char *element) {
   Node *node = malloc(sizeof(Node));
   node->data = strdup(element);
@@ -48,6 +52,7 @@ void SPUSH(Stack *stack, char *element) {
   stack->size++;
 }
 
+// This function pops an element from the stack
 char *SPOP(Stack *stack) {
   if (stack->head == NULL) {
     return NULL;
@@ -59,6 +64,7 @@ char *SPOP(Stack *stack) {
   }
 }
 
+// This function writes the stack elements back to the database file
 void write_stack(char *filename, Stack *stack, char *struct_name,
                  char *struct_type) {
   FILE *temp = fopen("temp.txt", "a+");
