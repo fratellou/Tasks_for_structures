@@ -8,8 +8,7 @@
 
 // This function implements the double linked set operation
 void Dset(char *db_file, char **query) {
-  char **line = malloc(
-      MAX_LEN * sizeof(char *)); 
+  char **line = malloc(MAX_LEN * sizeof(char *));
   int size = 0;
   int isnt_empty = 0;
   DSet *set = createDSet(MAX_LEN);
@@ -28,7 +27,8 @@ void Dset(char *db_file, char **query) {
   free(line);
 }
 
-//This function takes a query and a double linked set object as parameters and executes the command specified in the query
+// This function takes a query and a double linked set object as parameters and
+// executes the command specified in the query
 void Dset_commands(char **query, DSet *set) {
   if (!strcmp(query[0], "DSADD")) {
     printf("-> %s\n", DSADD(set, query[2]));
@@ -44,7 +44,7 @@ void Dset_commands(char **query, DSet *set) {
   }
 }
 
-//This function creates a new double linked set 
+// This function creates a new double linked set
 DSet *createDSet(int size) {
   DSet *set = (DSet *)malloc(sizeof(DSet));
   set->size = size;
@@ -64,38 +64,38 @@ int Dset_calc(char *key) {
   return hash % MAX_LEN;
 }
 
-//This function adds an element to the double linked set
+// This function adds an element to the double linked set
 char *DSADD(DSet *set, char *element) {
   int index = Dset_calc(element);
   if (set->buckets[index] != NULL) {
     ERROR;
     return NULL;
   }
-Node_Dset *newNode = (Node_Dset *)malloc(sizeof(Node_Dset));
-newNode->element = element;
-newNode->prev = NULL;
-newNode->next = set->buckets[index];
-if (set->buckets[index] != NULL) {
-  set->buckets[index]->prev = newNode;
-}
-set->buckets[index] = newNode;
-return element;
+  Node_Dset *newNode = (Node_Dset *)malloc(sizeof(Node_Dset));
+  newNode->element = element;
+  newNode->prev = NULL;
+  newNode->next = set->buckets[index];
+  if (set->buckets[index] != NULL) {
+    set->buckets[index]->prev = newNode;
+  }
+  set->buckets[index] = newNode;
+  return element;
 }
 
-//This function removes an element from the double linked set
+// This function removes an element from the double linked set
 char *DSREM(DSet *set, char *element) {
   int index = Dset_calc(element);
   if (set->buckets[index] == NULL) {
     return NULL;
   } else {
     char *element = set->buckets[index]->element;
-    Node_Dset *nextNode = set->buckets[index]->next;  
-    Node_Dset *prevNode = set->buckets[index]->prev;  
+    Node_Dset *nextNode = set->buckets[index]->next;
+    Node_Dset *prevNode = set->buckets[index]->prev;
     if (nextNode != NULL) {
-        nextNode->prev = prevNode;
+      nextNode->prev = prevNode;
     }
     if (prevNode != NULL) {
-        prevNode->next = nextNode;
+      prevNode->next = nextNode;
     }
     set->buckets[index] = NULL;
     return element;
@@ -103,7 +103,7 @@ char *DSREM(DSet *set, char *element) {
   return NULL;
 }
 
-//This function checks if an element is a member of the double linked set
+// This function checks if an element is a member of the double linked set
 int DSISMEMBER(DSet *set, char *element) {
   int index = Dset_calc(element);
   if (set->buckets[index] == NULL)
@@ -114,8 +114,9 @@ int DSISMEMBER(DSet *set, char *element) {
   return 0;
 }
 
-//This function writes the contents of the double linked set to a file
-void write_Dset(char *filename, DSet *set, char *struct_name, char *struct_type) {
+// This function writes the contents of the double linked set to a file
+void write_Dset(char *filename, DSet *set, char *struct_name,
+                char *struct_type) {
   FILE *temp = fopen("temp.txt", "a+");
   FILE *fp = fopen(filename, "r");
   if (fp && temp) {
@@ -151,7 +152,8 @@ void write_Dset(char *filename, DSet *set, char *struct_name, char *struct_type)
   fclose(temp);
 }
 
-//This function frees the memory allocated for the double linked set object and its buckets
+// This function frees the memory allocated for the double linked set object and
+// its buckets
 void free_Dset(DSet *set) {
   if (set == NULL) {
     return;

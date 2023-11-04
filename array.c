@@ -8,8 +8,7 @@
 
 // This function implements the array operation
 void array(char *db_file, char **query) {
-  char **line = malloc(
-      MAX_LEN * sizeof(char *));
+  char **line = malloc(MAX_LEN * sizeof(char *));
   int size = 0;
   int isnt_empty = 0;
 
@@ -53,14 +52,14 @@ void array_commands(char **query, Array *array) {
 
 // Function to create an array
 Array *createArray(int size) {
-    Array* array = (Array*)malloc(sizeof(Array));
-    array->data = (int*)malloc(size * sizeof(int));
-    array->size = 0;
+  Array *array = (Array *)malloc(sizeof(Array));
+  array->data = (int *)malloc(size * sizeof(int));
+  array->size = 0;
   return array;
 }
 
 // Function to add an element to the end of the array
-int ARADD(Array *arr, int element) { 
+int ARADD(Array *arr, int element) {
   if (arr->size < MAX_LEN) {
     arr->data[arr->size++] = element;
     return element;
@@ -71,16 +70,16 @@ int ARADD(Array *arr, int element) {
 
 // Function to insert an element at a specific index in the array
 int ARINS(Array *arr, int index, int element) {
-    if (arr->size < MAX_LEN && index >= 0 && index <= arr->size) {
-        for (int i = arr->size; i > index; i--) {
-            arr->data[i] = arr->data[i - 1];
-        }
-        arr->data[index] = element;
-        arr->size++;
-        return element;
+  if (arr->size < MAX_LEN && index >= 0 && index <= arr->size) {
+    for (int i = arr->size; i > index; i--) {
+      arr->data[i] = arr->data[i - 1];
     }
-    ERROR;
-    return -1;
+    arr->data[index] = element;
+    arr->size++;
+    return element;
+  }
+  ERROR;
+  return -1;
 }
 
 // Function to delete the last element in the array
@@ -88,7 +87,7 @@ int ARDEL(Array *arr) {
   if (arr->size > 0) {
     int index = arr->size;
     arr->size--;
-    return arr->data[index-1];
+    return arr->data[index - 1];
   }
   ERROR;
   return -1;
@@ -96,20 +95,20 @@ int ARDEL(Array *arr) {
 
 // Function to remove an element at a specific index in the array
 int ARREM(Array *arr, int index) {
-    if (arr->size > 0 && index >= 0 && index < arr->size) {
-      int element = arr->data[index];
-      for (int i = index; i < arr->size - 1; i++) {
-        arr->data[i] = arr->data[i + 1];
-      }
-      arr->size--;
-      return element;
+  if (arr->size > 0 && index >= 0 && index < arr->size) {
+    int element = arr->data[index];
+    for (int i = index; i < arr->size - 1; i++) {
+      arr->data[i] = arr->data[i + 1];
     }
-    ERROR;
-    return -1;
+    arr->size--;
+    return element;
+  }
+  ERROR;
+  return -1;
 }
 
 // Function to get the value at a specific index in the array
-int ARGET(Array* array, int index) {
+int ARGET(Array *array, int index) {
   if (index >= 0 && index < array->size) {
     return array->data[index];
   }
@@ -118,7 +117,7 @@ int ARGET(Array* array, int index) {
 }
 
 // Function to change the value at a specific index in the array
-int ARCHG(Array* array, int index, int element) {
+int ARCHG(Array *array, int index, int element) {
   if (index >= 0 && index < array->size) {
     array->data[index] = element;
     return element;
@@ -128,18 +127,19 @@ int ARCHG(Array* array, int index, int element) {
 }
 
 // Function to search for an element in the array and return its index
-int ARSRCH(Array* array, int element) {
-    for (int i = 0; i < array->size; i++) { 
-        if (array->data[i] == element) {  
-            return i;
-        }
+int ARSRCH(Array *array, int element) {
+  for (int i = 0; i < array->size; i++) {
+    if (array->data[i] == element) {
+      return i;
     }
-    ERROR;
-    return -1;  
+  }
+  ERROR;
+  return -1;
 }
 
 // Function to write the array data to a file
-void write_array(char *filename, Array *arr, char *struct_name, char *struct_type) {
+void write_array(char *filename, Array *arr, char *struct_name,
+                 char *struct_type) {
   FILE *temp = fopen("temp.txt", "a+");
   FILE *fp = fopen(filename, "r");
   if (fp && temp) {

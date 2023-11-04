@@ -9,8 +9,7 @@
 // This function implements the hash operation
 void hash(char *db_file, char **query) {
 
-  char **line = malloc(
-      MAX_LEN * sizeof(char *)); 
+  char **line = malloc(MAX_LEN * sizeof(char *));
   int isnt_empty = 0;
   int size = 0;
   HashTable *hashtable = createHashTable(MAX_LEN);
@@ -111,7 +110,7 @@ char *HDEL(HashTable *hashtable, char *key) {
   return NULL;
 }
 
-//Retrieves an element from the hash table based on the provided key
+// Retrieves an element from the hash table based on the provided key
 char *HGET(HashTable *hashtable, char *key) {
   int index = hash_calc(key);
   Node_hash *current = hashtable->table[index];
@@ -124,7 +123,7 @@ char *HGET(HashTable *hashtable, char *key) {
   return NULL;
 }
 
-//Writes the contents of the hash table to a file
+// Writes the contents of the hash table to a file
 void write_hash(char *filename, HashTable *hashtable, char *struct_name,
                 char *struct_type) {
   FILE *temp = fopen("temp.txt", "a+");
@@ -168,7 +167,7 @@ void write_hash(char *filename, HashTable *hashtable, char *struct_name,
   fclose(temp);
 }
 
-//Frees the memory used by the hash table and its elements
+// Frees the memory used by the hash table and its elements
 void destroyHashTable(HashTable *hashtable) {
   for (int i = 0; i < hashtable->size; i++) {
     Node_hash *current = hashtable->table[i];

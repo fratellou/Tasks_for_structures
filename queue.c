@@ -8,8 +8,7 @@
 
 // This function implements the queue operation
 void queue(char *db_file, char **query) {
-  char **line = malloc(
-      MAX_LEN * sizeof(char *)); 
+  char **line = malloc(MAX_LEN * sizeof(char *));
   int isnt_empty = 0;
   int size = 0;
   Queue queue = {NULL, NULL, 0};

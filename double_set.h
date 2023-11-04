@@ -3,8 +3,8 @@
 
 typedef struct Node_Dset {
   char *element;
-  struct Node_Dset *prev;  
-  struct Node_Dset *next;  
+  struct Node_Dset *prev;
+  struct Node_Dset *next;
 } Node_Dset;
 
 typedef struct DSet {
@@ -19,6 +19,7 @@ int Dset_calc(char *key);
 char *DSADD(DSet *set, char *element);
 char *DSREM(DSet *set, char *element);
 int DSISMEMBER(DSet *set, char *element);
-void write_Dset(char *filename, DSet *set, char *struct_name, char *struct_type);
+void write_Dset(char *filename, DSet *set, char *struct_name,
+                char *struct_type);
 void free_Dset(DSet *set);
 #endif

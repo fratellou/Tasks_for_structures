@@ -8,8 +8,7 @@
 
 // This function implements the stack operation
 void stack(char *db_file, char **query) {
-  char **line = malloc(
-      MAX_LEN * sizeof(char *)); 
+  char **line = malloc(MAX_LEN * sizeof(char *));
   int isnt_empty = 0;
   int size = 0;
   Stack stack = {NULL, 0};
