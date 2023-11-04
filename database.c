@@ -73,7 +73,7 @@ void request(char *db_file, char **query) {
       !strcmp(query[0], "ARDEL") || !strcmp(query[0], "ARINS") || !strcmp(query[0], "ARGET") || !strcmp(query[0], "ARSRCH") || !strcmp(query[0], "ARCHG")) {
     array(db_file, query); 
   } else if (!strcmp(query[0], "TADD") || !strcmp(query[0], "TSRCH") ||
-      !strcmp(query[0], "TDEL") || !strcmp(query[0], "TIN")) {
+      !strcmp(query[0], "TDEL")) {
     tree(db_file, query); 
   } else
     ERROR;
