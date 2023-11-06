@@ -61,8 +61,7 @@ Node_tree *createTree(int key) {
 // This function inserts a new node with the given key into the tree
 Node_tree *TADD(Node_tree *root, int key) {
   // If the tree is empty, create a new node and return it
-  if (root == NULL)
-    return createTree(key);
+  if (root == NULL) return createTree(key);
 
   Node_tree *root2 = root, *root3 = NULL;
   Node_tree *tmp = malloc(sizeof(Node_tree));
@@ -101,8 +100,7 @@ Node_tree *TSRCH(Node_tree *root, int data) {
 // This function returns the successor of a given node in the tree
 Node_tree *succ(Node_tree *root) {
   Node_tree *p = root, *l = NULL;
-  if (p->right != NULL)
-    return min(p->right);
+  if (p->right != NULL) return min(p->right);
   l = p->parent;
   // Traversing up the tree to find the successor
   while ((l != NULL) && (p == l->right)) {
@@ -116,8 +114,7 @@ Node_tree *succ(Node_tree *root) {
 Node_tree *min(Node_tree *root) {
   Node_tree *l = root;
   // Traversing down the left subtree to find the minimum value
-  while (l->left != NULL)
-    l = l->left;
+  while (l->left != NULL) l = l->left;
   return l;
 }
 

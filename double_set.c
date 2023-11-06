@@ -106,8 +106,7 @@ char *DSREM(DSet *set, char *element) {
 // This function checks if an element is a member of the double linked set
 int DSISMEMBER(DSet *set, char *element) {
   int index = Dset_calc(element);
-  if (set->buckets[index] == NULL)
-    return 0;
+  if (set->buckets[index] == NULL) return 0;
   if (strcmp(set->buckets[index]->element, element) == 0) {
     return 1;
   }

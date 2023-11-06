@@ -8,7 +8,6 @@
 
 // This function implements the hash operation
 void hash(char *db_file, char **query) {
-
   char **line = malloc(MAX_LEN * sizeof(char *));
   int isnt_empty = 0;
   int size = 0;

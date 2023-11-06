@@ -1,6 +1,9 @@
+#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 
 #include "array.h"
 #include "double_set.h"
@@ -21,7 +24,6 @@ int main(int argc, char *argv[]) {
     char *db_file = malloc(MAX_LEN * sizeof(char));
     char **query = malloc(MAX_LEN * sizeof(char *));
     for (int i = 1; i < argc; i++) {
-
       if (!strcmp(argv[i], "--file")) {
         i++;
         strcpy(db_file, argv[i]);
@@ -79,4 +81,21 @@ void request(char *db_file, char **query) {
     tree(db_file, query);
   } else
     ERROR;
+}
+
+int Socket(int domain, int type, int protocol) {
+  int res = socket(domain, type, protocol);
+  if (res == -1) {
+    perror();
+    exit(EXIT_FAILURE);
+  }
+  return res;
+}
+
+void Bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
+  int res = bind(sockfd, addr, addrlen);
+  if (res == -1) {
+    perror("binf failed");
+    exit(EXIT_FAILURE);
+  }
 }
