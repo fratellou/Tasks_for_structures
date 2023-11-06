@@ -1,9 +1,15 @@
 CFLAGS=-Wall -Wextra -Werror
 
-all:build
+all:server client
 
-build: database.o hash.o stack.o array.o set.o tree.o queue.o hash.o double_set.o 
-	gcc $(CFLAGS) database.o hash.o array.o tree.o stack.o set.o queue.o double_set.o -o dbms
+server: database.o hash.o stack.o array.o set.o tree.o queue.o hash.o double_set.o 
+	gcc $(CFLAGS) database.o hash.o array.o tree.o stack.o set.o queue.o double_set.o -o server
+
+client: client.o
+	gcc $(CFLAGS) client.o -o dbms
+
+client.o: client.c macro.h
+	gcc $(CFLAGS) -c client.c
 
 database.o: macro.h hash.h hash.c queue.c queue.h set.c set.h stack.h stack.c database.c
 	gcc $(CFLAGS) -c database.c
@@ -30,6 +36,6 @@ three.o: macro.h tree.h tree.c
 	gcc $(CFLAGS) -c tree.c
 
 clean: 
-	rm -rf *.o dbms
+	rm -rf *.o dbms server
 
 rebuild:clean all
