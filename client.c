@@ -14,10 +14,9 @@
 
 int main(int argc, char *argv[]) {
   if (argc > 0) {
-    int len_quer = 0;
     int counter_of_flags = 0;
     char *db_file = malloc(MAX_LEN * sizeof(char));
-    char **query = malloc(MAX_LEN * sizeof(char *));
+    char *query = malloc(MAX_LEN * sizeof(char));
     for (int i = 1; i < argc; i++) {
       if (!strcmp(argv[i], "--file")) {
         i++;
@@ -26,13 +25,7 @@ int main(int argc, char *argv[]) {
 
       } else if (!strcmp(argv[i], "--query")) {
         i++;
-        char *istr = strtok(argv[i], " ");
-        while (istr != NULL) {
-          query[len_quer] = malloc(MAX_LEN * sizeof(char));
-          strcpy(query[len_quer], istr);
-          istr = strtok(NULL, " ");
-          len_quer++;
-        }
+        strcpy(query, argv[i]);
         counter_of_flags++;
       } else {
         break;
@@ -65,19 +58,14 @@ int main(int argc, char *argv[]) {
       }
 
       // Sending a request
-      if (send(client_socket, db_file, strlen(db_file), 0) == -1) {
+      if (send(client_socket, db_file, MAX_LEN, 0) == -1) {
         perror("Error when sending a message to the server");
         exit(EXIT_FAILURE);
       }
-      if (send(client_socket, &len_quer, sizeof(len_quer), 0) == -1) {
+
+      if (send(client_socket, query, MAX_LEN, 0) == -1) {
         perror("Error when sending a message to the server");
         exit(EXIT_FAILURE);
-      }
-      for (int i = 0; i < len_quer; i++) {
-        if (send(client_socket, query[i], strlen(query[i]), 0) == -1) {
-          perror("Error when sending a message to the server");
-          exit(EXIT_FAILURE);
-        }
       }
 
       printf("The request has been sent\n");
@@ -86,11 +74,7 @@ int main(int argc, char *argv[]) {
         perror("Error receiving response from server");
         exit(EXIT_FAILURE);
       }
-      printf("REQUEST STATUS: %s", response);
-
-      for (int i = 0; i < len_quer; i++) {
-        free(query[i]);
-      }
+      printf("REQUEST STATUS: %s\n", response);
 
       close(client_socket);
     }

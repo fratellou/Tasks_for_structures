@@ -1,5 +1,6 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,6 +18,7 @@
 #include "tree.h"
 
 #define PORT 6379
+pthread_mutex_t mutex;
 
 void request(char *db_file, char **query);
 void handle_client(int client_socket);
@@ -51,64 +53,62 @@ int main() {
 
   printf("Server is running and waiting for connections...\n");
 
-  // while (1) {
-  socklen_t client_address_length = sizeof(client_address);
-  int client_socket = accept(server_socket, (struct sockaddr *)&client_address,
-                             &client_address_length);
-  if (client_socket < 0) {
-    perror("Connection acceptance error");
-    exit(EXIT_FAILURE);
+  while (1) {
+    socklen_t client_address_length = sizeof(client_address);
+    int client_socket =
+        accept(server_socket, (struct sockaddr *)&client_address,
+               &client_address_length);
+    if (client_socket < 0) {
+      perror("Connection acceptance error");
+      exit(EXIT_FAILURE);
+    }
+
+    printf("New connection accepted\n");
+
+    // Processing a client request in a separate thread
+    handle_client(client_socket);
   }
-
-  printf("New connection accepted\n");
-
-  // Processing a client request in a separate thread
-  handle_client(client_socket);
-  // }
 
   close(server_socket);
   return 0;
 }
 
 void handle_client(int client_socket) {
-  char db_file[MAX_LEN];
-
-  memset(db_file, 0, sizeof(db_file));
-  if (read(client_socket, db_file, sizeof(db_file)) < 0) {
+  pthread_mutex_init(&mutex, NULL);
+  char *db_file = malloc(MAX_LEN * sizeof(char));
+  if (read(client_socket, db_file, MAX_LEN) < 0) {
     perror("Error reading from socket");
     exit(EXIT_FAILURE);
   }
 
-  // Receiving the number of queries from the client
-  int num_queries;
-  if (read(client_socket, &num_queries, sizeof(num_queries)) == -1) {
+  char *query = malloc(MAX_LEN * sizeof(char));
+  if (read(client_socket, query, MAX_LEN) < 0) {
     perror("Error reading from socket");
     exit(EXIT_FAILURE);
   }
 
-  // char **query = malloc(num_queries * sizeof(char *));
-  // for (int i = 0; i < num_queries; i++) {
-  char temp_query[MAX_LEN];
-  memset(temp_query, 0, sizeof(temp_query));
-
-  if (read(client_socket, temp_query, sizeof(temp_query)) < 0) {
-    perror("Error reading from socket");
-    exit(EXIT_FAILURE);
+  char **parsed_query = malloc(MAX_LEN * sizeof(char *));
+  char *istr = strtok(query, " ");
+  int i = 0;
+  while (istr != NULL) {
+    parsed_query[i] = malloc(MAX_LEN * sizeof(char));
+    strcpy(parsed_query[i], istr);
+    istr = strtok(NULL, " ");
+    i++;
   }
-  // query[i] = malloc(MAX_LEN * sizeof(char));
-  printf("%s\n", temp_query);
-  // strcpy(query[i], temp_query);
-  // printf("%s\n", query[i]);
-  //}
 
-  // request(db_file, query);
+  request(db_file, parsed_query);
   send(client_socket, "DONE", 4, 0);
+  free(db_file);
+  free(query);
+  pthread_mutex_destroy(&mutex);
   close(client_socket);
 
   printf("Connection completed\n");
 }
 
 void request(char *db_file, char **query) {
+  pthread_mutex_lock(&mutex);
   if (!strcmp(query[0], "SADD") || !strcmp(query[0], "SREM") ||
       !strcmp(query[0], "SISMEMBER")) {
     set(db_file, query);
@@ -132,4 +132,5 @@ void request(char *db_file, char **query) {
     tree(db_file, query);
   } else
     ERROR;
+  pthread_mutex_unlock(&mutex);
 }
