@@ -12,11 +12,8 @@ typedef struct Stack {
 } Stack;
 
 void stack(char *db_file, char **query);
-void stack_commands(char **query, Stack *stack);
 void SPUSH(Stack *stack, char *element);
-char *SPOP(Stack *stack);
-void write_stack(char *filename, Stack *stack, char *struct_name,
-                 char *struct_type);
-void free_stack(Stack *stack);
+void SPOP(Stack *stack);
+
 
 #endif
