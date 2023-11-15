@@ -2,7 +2,7 @@
 #define STACK_H
 
 typedef struct Node {
-  char *data;
+  char data;
   struct Node *next;
 } Node;
 
