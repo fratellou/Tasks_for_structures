@@ -6,8 +6,8 @@
 #include "tree.h"
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "main.h"
+
 
 int main() {
 #ifdef QUEST1
@@ -35,76 +35,40 @@ int main() {
 void quest1() {
 
     char sequence[100];
-    printf("Введите последовательность скобок: ");
+    printf("Enter a sequence of brackets: ");
     scanf("%s", sequence);
 
     if (isBalanced(sequence)) {
-        printf("Скобки вложены правильно\n");
+        printf("The brackets are balanced\n");
     }
     else {
-        printf("Скобки вложены неправильно\n");
+        printf("The brackets are not balanced\n");
     }
-
-    /*
-    // Определение структуры стека
-struct Stack {
-    char data;
-    struct Stack* next;
-};
-
-// Функция для создания нового элемента стека
-struct Stack* newNode(char data) {
-    struct Stack* stackNode = (struct Stack*)malloc(sizeof(struct Stack));
-    stackNode->data = data;
-    stackNode->next = NULL;
-    return stackNode;
 }
 
-// Функция для добавления элемента в стек
-void push(struct Stack** root, char data) {
-    struct Stack* stackNode = newNode(data);
-    stackNode->next = *root;
-    *root = stackNode;
-}
-
-// Функция для удаления элемента из стека и возврата его значения
-char pop(struct Stack** root) {
-    if (*root == NULL)
-        return '\0';
-    struct Stack* temp = *root;
-    *root = (*root)->next;
-    char popped = temp->data;
-    free(temp);
-    return popped;
-}
-
-// Функция для проверки, является ли данная последовательность скобок корректной
+// Function to check if a given sequence of brackets is correct
 int isBalanced(char* sequence) {
-    struct Stack* stack = NULL;
+    Stack stack = {NULL, 0};
 
     for (int i = 0; sequence[i] != '\0'; i++) {
         if (sequence[i] == '(' || sequence[i] == '{' || sequence[i] == '[') {
-            push(&stack, sequence[i]); // Добавляем открывающую скобку в стек
+            SPUSH(&stack, sequence[i]); 
         }
         else if (sequence[i] == ')' || sequence[i] == '}' || sequence[i] == ']') {
-            if (stack == NULL) {
-                return 0; // Если стек пустой, то последовательность некорректна
+            if (stack.size == 0) {
+                return 0; // If the stack is empty, the sequence is incorrect
             }
-            char top = pop(&stack); // Извлекаем последний элемент из стека
+            char top = SPOP(&stack); 
             if ((top == '(' && sequence[i] != ')') || (top == '{' && sequence[i] != '}') || (top == '[' && sequence[i] != ']')) {
-                return 0; // Если последовательность скобок некорректна, то возвращаем 0
+                return 0; 
             }
         }
     }
 
-    if (stack == NULL) {
-        return 1; // Если стек пустой, то последовательность корректна
+    if (stack.size == 0) {
+        return 1;   // If the stack is empty, the sequence is correct
     }
-    return 0; // Если стек не пустой, то последовательность некорректна
-}
-
-    */
-    
+    return 0; // If the stack is not empty, the sequence is incorrect
 }
 
 void quest2() {

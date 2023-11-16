@@ -6,5 +6,6 @@ void quest3();
 void quest4();
 void quest5();
 void quest6();
+int isBalanced(char* sequence);
 
 #endif
