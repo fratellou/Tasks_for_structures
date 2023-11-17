@@ -22,7 +22,7 @@ char SPOP(Stack *stack) {
   if (stack->head == NULL) {
     return '\0';
   } else {
-    Node* temp = stack->head;
+    Node *temp = stack->head;
     stack->head = stack->head->next;
     char popped = temp->data;
     stack->size--;

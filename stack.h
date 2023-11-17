@@ -14,5 +14,4 @@ typedef struct Stack {
 void SPUSH(Stack *stack, char element);
 char SPOP(Stack *stack);
 
-
 #endif

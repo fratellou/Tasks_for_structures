@@ -1,433 +1,382 @@
-#include "array.h"
-#include "double_set.h"
-#include "hash.h"
-#include "queue.h"
-#include "stack.h"
-#include "tree.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "main.h"
 
-
-int main() {
-#ifdef QUEST1
-    quest1();
-#endif
-#ifdef QUEST2
-    quest2();
-#endif
-#ifdef QUEST3
-    quest3();
-#endif
-#ifdef QUEST4
-    quest4();
-#endif
-#ifdef QUEST5
-    quest5();
-#endif
-#ifdef QUEST6
-    quest6();
-#endif
-
-    return 0;
-}
-
-void quest1() {
-
-    char sequence[100];
-    printf("Enter a sequence of brackets: ");
-    scanf("%s", sequence);
-
-    if (isBalanced(sequence)) {
-        printf("The brackets are balanced\n");
-    }
-    else {
-        printf("The brackets are not balanced\n");
-    }
-}
-
-// Function to check if a given sequence of brackets is correct
-int isBalanced(char* sequence) {
-    Stack stack = {NULL, 0};
-
-    for (int i = 0; sequence[i] != '\0'; i++) {
-        if (sequence[i] == '(' || sequence[i] == '{' || sequence[i] == '[') {
-            SPUSH(&stack, sequence[i]); 
-        }
-        else if (sequence[i] == ')' || sequence[i] == '}' || sequence[i] == ']') {
-            if (stack.size == 0) {
-                return 0; // If the stack is empty, the sequence is incorrect
-            }
-            char top = SPOP(&stack); 
-            if ((top == '(' && sequence[i] != ')') || (top == '{' && sequence[i] != '}') || (top == '[' && sequence[i] != ']')) {
-                return 0; 
-            }
-        }
-    }
-
-    if (stack.size == 0) {
-        return 1;   // If the stack is empty, the sequence is correct
-    }
-    return 0; // If the stack is not empty, the sequence is incorrect
-}
-
-void quest2() {
-    /*
-    #include <stdio.h>
+#include <limits.h>
 #include <stdbool.h>
-
-#define MAX_SIZE 100
-
-void subsetSum(int set[], int n, int target, int currentIndex, int currentSet[], int currentSum, bool *foundSubset) {
-    if (currentSum == target) {
-        printf("{");
-        for (int i = 0; i < currentIndex; i++) {
-            printf("%d", currentSet[i]);
-            if (i != currentIndex - 1) {
-                printf(", ");
-            }
-        }
-        printf("}\n");
-        *foundSubset = true;
-        return;
-    }
-    if (currentSum > target || currentIndex >= n) {
-        return;
-    }
-    
-    // Перебор элементов начиная с текущего индекса
-    for (int i = currentIndex; i < n; i++) {
-        // Проверка, что сумма текущего подмножества плюс текущий элемент не превышает заданную сумму
-        if (currentSum + set[i] <= target) {
-            currentSet[currentIndex] = set[i];
-            // Рекурсивный вызов функции со следующим индексом и обновленным текущим подмножеством и суммой
-            subsetSum(set, n, target, currentIndex + 1, currentSet, currentSum + set[i], foundSubset);
-        }
-    }
-}
-
-void findSubsets(int set[], int n, int target) {
-    int currentSet[MAX_SIZE] = {0};
-    bool foundSubset = false;
-    
-    subsetSum(set, n, target, 0, currentSet, 0, &foundSubset);
-    
-    if (!foundSubset) {
-        printf("Подмножество с заданной суммой не найдено\n");
-    }
-}
-
-int main() {
-    int set[] = {4, 10, 5, 1, 3, 7};
-    int n = sizeof(set) / sizeof(set[0]);
-    int target = 15;
-    
-    // Сортировка множества по убыванию
-    for (int i = 0; i < n; i++) {
-        for (int j = i + 1; j < n; j++) {
-            if (set[i] < set[j]) {
-                int temp = set[i];
-                set[i] = set[j];
-                set[j] = temp;
-            }
-        }
-    }
-    
-    findSubsets(set, n, target);
-    
-    return 0;
-}
-    */
-}
-
-void quest3() {
-    /*
-    void printSubarray(int arr[], int start, int end) {
-    for (int i = start; i <= end; i++) {
-        printf("%d ", arr[i]);
-    }
-    printf("\n");
-}
-
-void findLargestSubarray(int arr[], int n) {
-    int maxSum = arr[0];
-    int currentSum = arr[0];
-    int startIndex = 0;
-    int endIndex = 0;
-    int currentStartIndex = 0;
-
-    for (int i = 1; i < n * 2; i++) {
-        int j = i % n;
-        
-        if (currentSum < 0) {
-            currentSum = arr[j];
-            currentStartIndex = j;
-        } else {
-            currentSum += arr[j];
-        }
-
-        if (currentSum > maxSum) {
-            maxSum = currentSum;
-            startIndex = currentStartIndex;
-            endIndex = j;
-        }
-    }
-
-    printf("Подмассив с наибольшей суммой: ");
-    printSubarray(arr, startIndex, endIndex);
-}
-
-int main() {
-    int arr[] = {4, -7, 1, 5, -4, 0, -3, 2, 4, 1};
-    int n = sizeof(arr) / sizeof(arr[0]);
-
-    findLargestSubarray(arr, n);
-
-    return 0;
-}
-    */
-}
-
-void quest4() {
-    /*
-    #include <stdbool.h>
-
-// Структура для представления узла дерева 
-struct Node {
-    int data;
-    struct Node* left;
-    struct Node* right;
-};
-
-// Рекурсивная функция для проверки, является ли дерево BST
-// node - указатель на текущий узел
-// min - минимально допустимое значение (NULL для неограниченности)
-// max - максимально допустимое значение (NULL для неограниченности)
-// Возвращает true, если дерево является BST, иначе false
-bool isBSTUtil(struct Node* node, struct Node* min, struct Node* max)
-{
-    // Базовый случай: пустое дерево является BST
-    if (node == NULL)
-        return true;
-
-    // Если значение узла нарушает условия BST, то дерево не является BST
-    if ((min != NULL && node->data <= min->data) || (max != NULL && node->data >= max->data))
-        return false;
-
-    // Рекурсивно проверяем левое и правое поддерево
-    return isBSTUtil(node->left, min, node) && isBSTUtil(node->right, node, max);
-}
-
-// Функция для вызова isBSTUtil с корневым узлом
-bool isBST(struct Node* root)
-{
-    return isBSTUtil(root, NULL, NULL);
-}
-```
-
-Вы можете использовать эту функцию следующим образом:
-
-```c
-int main()
-{
-    struct Node* root = (struct Node*)malloc(sizeof(struct Node));
-    root->data = 4;
-    
-    struct Node* leftChild = (struct Node*)malloc(sizeof(struct Node));
-    leftChild->data = 2;
-    
-    struct Node* rightChild = (struct Node*)malloc(sizeof(struct Node));
-    rightChild->data = 6;
-    
-    root->left = leftChild;
-    root->right = rightChild;
-    
-    bool isBST1 = isBST(root);
-    
-    if (isBST1)
-        printf("Дерево является BST\n");
-    else
-        printf("Дерево не является BST\n");
-    
-    return 0;
-}
-    */
-}
-
-void quest5() {
-    /*
-    typedef struct {
-    int x, y;
-} Position;
-
-typedef struct Node {
-    Position position;
-    int steps;
-    struct Node* next;
-} Node;
-
-typedef struct {
-    Node* head;
-    Node* tail;
-} Queue;
-
-// Функция для создания новой очереди
-Queue createQueue() {
-    Queue q;
-    q.head = NULL;
-    q.tail = NULL;
-    return q;
-}
-
-// Функция для добавления элемента в очередь
-void enqueue(Queue* q, Position position, int steps) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    newNode->position = position;
-    newNode->steps = steps;
-    newNode->next = NULL;
-
-    if (q->head == NULL) {
-        q->head = newNode;
-        q->tail = newNode;
-    } else {
-        q->tail->next = newNode;
-        q->tail = newNode;
-    }
-}
-
-// Функция для удаления элемента из очереди
-Position dequeue(Queue* q, int* steps) {
-    if (q->head == NULL) {
-        printf("Queue is empty.\n");
-        Position emptyPosition;
-        emptyPosition.x = -1;
-        emptyPosition.y = -1;
-        return emptyPosition;
-    }
-
-    Node* firstNode = q->head;
-    Position position = firstNode->position;
-    *steps = firstNode->steps;
-
-    q->head = firstNode->next;
-    free(firstNode);
-
-    if (q->head == NULL) {
-        q->tail = NULL;
-    }
-
-    return position;
-}
-
-// Функция для проверки, находится ли позиция в пределах доски
-int isInsideBoard(int x, int y, int N) {
-    return (x >= 1 && x <= N && y >= 1 && y <= N);
-}
-
-// Функция для вычисления кратчайшего пути коня на шахматной доске
-void findShortestPath(int N, Position start, Position target) {
-    int dx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
-    int dy[] = {1, 2, 2, 1, -1, -2, -2, -1};
-    int visited[N][N];
-
-    // Инициализация матрицы посещений
-    for (int i = 1; i <= N; i++) {
-        for (int j = 1; j <= N; j++) {
-            visited[i][j] = 0;
-        }
-    }
-
-    Queue queue = createQueue();
-    enqueue(&queue, start, 0);
-    visited[start.x][start.y] = 1;
-
-    while (queue.head != NULL) {
-        int steps;
-        Position currentPosition = dequeue(&queue, &steps);
-
-        // Если достигли целевой позиции, выводим путь и количество шагов
-        if (currentPosition.x == target.x && currentPosition.y == target.y) {
-            printf("Path: (%d, %d)", currentPosition.x, currentPosition.y);
-            printf(" -> Steps: %d\n", steps);
-            return;
-        }
-
-        // Перебираем все возможные позиции коня и добавляем их в очередь
-        for (int i = 0; i < 8; i++) {
-            int nextX = currentPosition.x + dx[i];
-            int nextY = currentPosition.y + dy[i];
-
-            if (isInsideBoard(nextX, nextY, N) && !visited[nextX][nextY]) {
-                Position nextPosition;
-                nextPosition.x = nextX;
-                nextPosition.y = nextY;
-
-                enqueue(&queue, nextPosition, steps + 1);
-                visited[nextX][nextY] = 1;
-            }
-        }
-    }
-
-    printf("Path does not exist.\n");
-}
-
-int main() {
-    int N = 4;
-    Position start, target;
-    start.x = 1;
-    start.y = 4;
-    target.x = 3;
-    target.y = 1;
-
-    findShortestPath(N, start, target);
-
-    return 0;
-}
-    */
-}
-
-void quest6() {
-    /*
-    #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-int isIsomorphic(char* a, char* b) {
-    int len_a = strlen(a);
-    int len_b = strlen(b);
-
-    if (len_a != len_b) {
-        return 0; // Строки разной длины не могут быть изоморфными
-    }
-
-    char a_to_b[256] = {0}; // Хэш-таблица для хранения символов из строки a
-    char b_to_a[256] = {0}; // Хэш-таблица для хранения символов из строки b
-
-    for (int i = 0; i < len_a; i++) {
-        char ch_a = a[i];
-        char ch_b = b[i];
-
-        if ((a_to_b[ch_a] != 0 && a_to_b[ch_a] != ch_b) || (b_to_a[ch_b] != 0 && b_to_a[ch_b] != ch_a)) {
-            return 0; // Найдено несоответствие символов
-        }
-
-        a_to_b[ch_a] = ch_b;
-        b_to_a[ch_b] = ch_a;
-    }
-
-    return 1; // Строки изоморфны
-}
+#include "array.h"
+#include "hash.h"
+#include "queue.h"
+#include "set.h"
+#include "stack.h"
+#include "tree.h"
+#define MAX_LEN 256
 
 int main() {
-    char a[] = "fall";
-    char b[] = "redd";
-    printf("%d\n", isIsomorphic(a, b));
+#ifdef QUEST1
+  quest1();
+#endif
+#ifdef QUEST2
+  quest2();
+#endif
+#ifdef QUEST3
+  quest3();
+#endif
+#ifdef QUEST4
+  quest4();
+#endif
+#ifdef QUEST5
+  quest5();
+#endif
+#ifdef QUEST6
+  quest6();
+#endif
 
-    char c[] = "mad";
-    char d[] = "odd";
-    printf("%d\n", isIsomorphic(c, d));
-
-    return 0;
+  return 0;
 }
-    */
+
+void quest1() {
+  char sequence[MAX_LEN];
+  printf("Enter a sequence of brackets: ");
+  scanf("%s", sequence);
+
+  if (isBalanced(sequence)) {
+    printf("The brackets are balanced\n");
+  } else {
+    printf("The brackets are not balanced\n");
+  }
+}
+
+// Function to check if a given sequence of brackets is correct
+int isBalanced(char *sequence) {
+  Stack stack = {NULL, 0};
+
+  for (int i = 0; sequence[i] != '\0'; i++) {
+    if (sequence[i] == '(' || sequence[i] == '{' || sequence[i] == '[') {
+      SPUSH(&stack, sequence[i]);
+    } else if (sequence[i] == ')' || sequence[i] == '}' || sequence[i] == ']') {
+      if (stack.size == 0) {
+        return 0;  // If the stack is empty, the sequence is incorrect
+      }
+      char top = SPOP(&stack);
+      if ((top == '(' && sequence[i] != ')') ||
+          (top == '{' && sequence[i] != '}') ||
+          (top == '[' && sequence[i] != ']')) {
+        return 0;
+      }
+    }
+  }
+
+  if (stack.size == 0) {
+    return 1;  // If the stack is empty, the sequence is correct
+  }
+  return 0;  // If the stack is not empty, the sequence is incorrect
+}
+
+void quest2() {
+  int len;
+  printf("Enter the length of the set: ");
+  scanf("%d", &len);
+
+  int target;
+  printf("Enter the required amount: ");
+  scanf("%d", &target);
+
+  Set *mySet = createSet(len);
+
+  for (int i = 0; i < len; i++) {
+    int elem;
+    scanf("%d", &elem);
+    SADD(mySet, elem);
+  }
+
+  int currentSet[MAX_LEN] = {0};
+
+  if (!subsetSumFromSet(mySet, mySet->buckets, target, 0, currentSet, 0)) {
+    printf("Subset with the required sum is not found\n");
+  }
+}
+
+int subsetSumFromSet(Set *set, Node_set **buckets, int target, int currentIndex,
+                     int currentSet[], int currentSum) {
+  if (currentSum == target) {
+    printf("{");
+    for (int i = 0; i < currentIndex; i++) {
+      printf("%d ", currentSet[i]);
+    }
+    printf("}\n");
+    return 1;
+  }
+  if (currentSum > target || currentIndex >= set->size) {
+    return 0;
+  }
+
+  for (Node_set *node = buckets[currentIndex]; node != NULL;
+       node = node->next) {
+    int element = node->element;
+
+    if (currentSum + element <= target) {
+      currentSet[currentIndex] = element;
+      if (subsetSumFromSet(set, buckets, target, currentIndex + 1, currentSet,
+                           currentSum + element))
+        return 1;
+    }
+  }
+  return 0;
+}
+
+void quest3() {
+  Array *arr = createArray(10);
+  ARADD(arr, 4);
+  ARADD(arr, -7);
+  ARADD(arr, 1);
+  ARADD(arr, 5);
+  ARADD(arr, -4);
+  ARADD(arr, 0);
+  ARADD(arr, -3);
+  ARADD(arr, 2);
+  ARADD(arr, 4);
+  ARADD(arr, 1);
+
+  int maxSum = maxSumCircularArray(arr);
+  printf("Maximum sum of a subarray in the circular array is: %d\n", maxSum);
+}
+
+int max(int a, int b) { return (a > b) ? a : b; }
+
+int min(int a, int b) { return (a < b) ? a : b; }
+// Function to find the maximum sum subarray in a circular array
+int maxSumCircularArray(Array *arr) {
+  int maxSum = arr->data[0];
+  int currMax = arr->data[0];
+  int totalSum = arr->data[0];
+  int minSum = arr->data[0];
+  int currMin = arr->data[0];
+
+  // Find maximum sum subarray in the array using Kadane's algorithm
+  for (int i = 1; i < arr->size; i++) {
+    currMax = max(arr->data[i], currMax + arr->data[i]);
+    maxSum = max(maxSum, currMax);
+
+    currMin = min(arr->data[i], currMin + arr->data[i]);
+    minSum = min(minSum, currMin);
+
+    totalSum += arr->data[i];
+  }
+
+  // If the total sum is equal to the minimum sum, return the maximum sum
+  if (totalSum - minSum == 0) {
+    return maxSum;
+  }
+
+  // Return the maximum of the maximum sum subarray and the difference
+  // between the total sum and the minimum sum subarray
+  return max(maxSum, totalSum - minSum);
+}
+
+void quest4() {
+  Node_tree *root = NULL;
+  int numNodes, key;
+
+  printf("Enter the number of nodes in the tree: ");
+  scanf("%d", &numNodes);
+
+  printf("Enter the values for each node: ");
+  for (int i = 0; i < numNodes; i++) {
+    scanf("%d", &key);
+    root = TADD(root, key);
+  }
+
+  int isBST = isBinarySearchTree(root);
+  if (isBST) {
+    printf("The tree is a BST\n");
+  } else {
+    printf("The tree is not a BST\n");
+  }
+}
+
+int isBST(Node_tree *node, int min, int max) {
+  // Пустое дерево считается валидным BST
+  if (node == NULL) {
+    return 1;
+  }
+
+  // Проверяем, что значение текущего узла находится в допустимом интервале
+  if (node->key < min || node->key > max) {
+    return 0;
+  }
+
+  // Рекурсивно проверяем левое и правое поддерево
+  return isBST(node->left, min, node->key - 1) &&
+         isBST(node->right, node->key + 1, max);
+}
+
+// Функция для проверки, является ли дерево BST
+int isBinarySearchTree(Node_tree *root) {
+  // Указываем начальные значения границ для проверки
+  int min = INT_MIN;
+  int max = INT_MAX;
+
+  // Рекурсивно вызываем функцию isBST для корневого узла
+  return isBST(root, min, max);
+}
+
+void quest5() {
+  int N = 4;
+  int startX = 0;
+  int startY = 3;
+  int targetX = 2;
+  int targetY = 0;
+
+  bfs(N, startX, startY, targetX, targetY);
+}
+
+void bfs(int N, int startX, int startY, int targetX, int targetY) {
+  // Создаем шахматную доску размером NxN
+  int board[N][N];
+
+  // Инициализируем доску значением -1, чтобы отслеживать пустые клетки
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < N; j++) {
+      board[i][j] = -1;
+    }
+  }
+
+  // Создаем очередь для обхода
+  Queue queue;
+  queue.head = NULL;
+  queue.tail = NULL;
+  queue.size = 0;
+
+  // Добавляем стартовую клетку в очередь
+  QPUSH(&queue, startX * N + startY);
+  board[startX][startY] = 0;
+
+  // Возможные шаги коня
+  int dx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
+  int dy[] = {1, 2, 2, 1, -1, -2, -2, -1};
+
+  while (queue.size > 0) {
+    // Получаем текущую клетку из очереди
+    int current = queue.head->data;
+    QPOP(&queue);
+
+    // Разделяем координаты текущей клетки
+    int x = current / N;
+    int y = current % N;
+
+    // Проверяем, является ли текущая клетка целевой
+    if (x == targetX && y == targetY) {
+      break;
+    }
+
+    // Перебираем все возможные шаги коня
+    for (int i = 0; i < 8; i++) {
+      int newX = x + dx[i];
+      int newY = y + dy[i];
+
+      // Проверяем, что новые координаты входят в границы доски
+      if (newX >= 0 && newX < N && newY >= 0 && newY < N) {
+        // Проверяем, что клетка еще не посещена
+        if (board[newX][newY] == -1) {
+          // Увеличиваем расстояние до новой клетки
+          board[newX][newY] = board[x][y] + 1;
+
+          // Добавляем новую клетку в очередь
+          QPUSH(&queue, newX * N + newY);
+        }
+      }
+    }
+  }
+
+  // Восстанавливаем путь обратно от целевой клетки
+  int path[N * N][2];
+  int pathIndex = 0;
+
+  int x = targetX;
+  int y = targetY;
+  path[pathIndex][0] = x;
+  path[pathIndex][1] = y;
+  pathIndex++;
+
+  while (x != startX || y != startY) {
+    // Перебираем все возможные шаги коня
+    for (int i = 0; i < 8; i++) {
+      int newX = x + dx[i];
+      int newY = y + dy[i];
+
+      // Проверяем, что новые координаты входят в границы доски
+      if (newX >= 0 && newX < N && newY >= 0 && newY < N) {
+        // Проверяем, что расстояние от текущей клетки до новой клетки меньше на
+        // 1
+        if (board[newX][newY] == board[x][y] - 1) {
+          x = newX;
+          y = newY;
+
+          path[pathIndex][0] = x;
+          path[pathIndex][1] = y;
+          pathIndex++;
+
+          break;
+        }
+      }
+    }
+  }
+
+  // Выводим путь
+  for (int i = pathIndex - 1; i >= 0; i--) {
+    printf("(%d, %d)", path[i][0] + 1, path[i][1] + 1);
+    if (i > 0) {
+      printf(" -> ");
+    }
+  }
+}
+
+void quest6() {
+  char str1[MAX_LEN];
+  printf("Enter a first string: ");
+  scanf("%s", str1);
+
+  char str2[MAX_LEN];
+  printf("Enter a second string: ");
+  scanf("%s", str2);
+
+  if (isIsomorphic(str1, str2))
+    printf("Strings are isomorphic\n");
+  else
+    printf("Strings are not isomorphic\n");
+}
+
+int isIsomorphic(char *a, char *b) {
+  int len_a = strlen(a);
+  int len_b = strlen(b);
+
+  if (len_a != len_b) {
+    return 0;  // Strings of different lengths cannot be isomorphic
+  }
+
+  HashTable *a_to_b = createHashTable(
+      len_a);  // Hash table for storing characters from string a
+  HashTable *b_to_a = createHashTable(
+      len_b);  // Hash table for storing characters from string b
+
+  for (int i = 0; i < len_a; i++) {
+    char ch_a = a[i];
+    char ch_b = b[i];
+
+    char *elem_a_to_b = HGET(a_to_b, &ch_a);
+    char *elem_b_to_a = HGET(b_to_a, &ch_b);
+
+    if ((elem_a_to_b != NULL && *elem_a_to_b != ch_b) ||
+        (elem_b_to_a != NULL && *elem_b_to_a != ch_a)) {
+      return 0;  // A character mismatch was found
+    }
+
+    HSET(a_to_b, &ch_a, &ch_b);
+    HSET(b_to_a, &ch_b, &ch_a);
+  }
+
+  return 1;  // Strings are isomorphic
 }

@@ -13,15 +13,9 @@ typedef struct HashTable {
   int capacity;
 } HashTable;
 
-void hash(char *db_file, char **query);
-void hash_commands(char **query, HashTable *hash);
 HashTable *createHashTable(int size);
-int hash_calc(char *key);
-char *HSET(HashTable *hashtable, char *key, char *value);
-char *HDEL(HashTable *hashtable, char *key);
+int hash_calc(char *key, int capacity);
+void HSET(HashTable *hashtable, char *key, char *value);
 char *HGET(HashTable *hashtable, char *key);
-void write_hash(char *filename, HashTable *hashtable, char *struct_name,
-                char *struct_type);
-void destroyHashTable(HashTable *hashtable);
 
 #endif
