@@ -8,6 +8,7 @@ typedef struct {
 
 Array *createArray(int size);
 int ARADD(Array *arr, int element);
-int ARINS(Array *arr, int index, int element);
+void printArray(Array *arr);
+void ARREM(Array *arr, int index);
 
 #endif

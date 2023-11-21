@@ -6,12 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "array.h"
-#include "hash.h"
-#include "queue.h"
-#include "set.h"
-#include "stack.h"
-#include "tree.h"
 #define MAX_LEN 256
 
 int main() {
@@ -76,69 +70,110 @@ int isBalanced(char *sequence) {
 }
 
 void quest2() {
-  int len;
-  printf("Enter the length of the set: ");
-  scanf("%d", &len);
+  Set *set1 = createSet(10);
+  Set *set2 = createSet(10);
 
-  int target;
-  printf("Enter the required amount: ");
-  scanf("%d", &target);
+  SADD(set1, "apple");
+  SADD(set1, "banana");
+  SADD(set1, "orange");
 
-  Set *mySet = createSet(len);
+  SADD(set2, "banana");
+  SADD(set2, "grape");
+  SADD(set2, "watermelon");
 
-  for (int i = 0; i < len; i++) {
-    int elem;
-    scanf("%d", &elem);
-    SADD(mySet, elem);
-  }
-
-  int currentSet[MAX_LEN] = {0};
-
-  if (!subsetSumFromSet(mySet, mySet->buckets, target, 0, currentSet, 0)) {
-    printf("Subset with the required sum is not found\n");
-  }
-}
-
-int subsetSumFromSet(Set *set, Node_set **buckets, int target, int currentIndex,
-                     int currentSet[], int currentSum) {
-  if (currentSum == target) {
-    printf("{");
-    for (int i = 0; i < currentIndex; i++) {
-      printf("%d ", currentSet[i]);
-    }
-    printf("}\n");
-    return 1;
-  }
-  if (currentSum > target || currentIndex >= set->size) {
-    return 0;
-  }
-
-  for (Node_set *node = buckets[currentIndex]; node != NULL;
-       node = node->next) {
-    int element = node->element;
-
-    if (currentSum + element <= target) {
-      currentSet[currentIndex] = element;
-      if (subsetSumFromSet(set, buckets, target, currentIndex + 1, currentSet,
-                           currentSum + element))
-        return 1;
+  printf("Set 1: ");
+  for (int i = 0; i < set1->size; i++) {
+    Node_set *current = set1->buckets[i].next;
+    while (current != NULL) {
+      printf("%s ", current->element);
+      current = current->next;
     }
   }
-  return 0;
+  printf("\n");
+
+  printf("Set 2: ");
+  for (int i = 0; i < set2->size; i++) {
+    Node_set *current = set2->buckets[i].next;
+    while (current != NULL) {
+      printf("%s ", current->element);
+      current = current->next;
+    }
+  }
+  printf("\n");
+
+  printf("Union set: ");
+  Set *unionSet = SUNION(set1, set2);
+  for (int i = 0; i < unionSet->size; i++) {
+    Node_set *current = unionSet->buckets[i].next;
+    while (current != NULL) {
+      printf("%s ", current->element);
+      current = current->next;
+    }
+  }
+  printf("\n");
+
+  printf("Intersection set: ");
+  Set *intersectionSet = SINTER(set1, set2);
+  for (int i = 0; i < intersectionSet->size; i++) {
+    Node_set *current = intersectionSet->buckets[i].next;
+    while (current != NULL) {
+      printf("%s ", current->element);
+      current = current->next;
+    }
+  }
+  printf("\n");
+
+  printf("Difference set: ");
+  Set *differenceSet = SDIFF(set1, set2);
+  for (int i = 0; i < differenceSet->size; i++) {
+    Node_set *current = differenceSet->buckets[i].next;
+    while (current != NULL) {
+      printf("%s ", current->element);
+      current = current->next;
+    }
+  }
+  printf("\n");
+
+  SREM(set1, "banana");
+  SREM(set2, "watermelon");
+
+  printf("Set 1 after removal: ");
+  for (int i = 0; i < set1->size; i++) {
+    Node_set *current = set1->buckets[i].next;
+    while (current != NULL) {
+      printf("%s ", current->element);
+      current = current->next;
+    }
+  }
+  printf("\n");
+
+  printf("Set 2 after removal: ");
+  for (int i = 0; i < set2->size; i++) {
+    Node_set *current = set2->buckets[i].next;
+    while (current != NULL) {
+      printf("%s ", current->element);
+      current = current->next;
+    }
+  }
+  printf("\n");
+
+  free(unionSet);
+  free(intersectionSet);
+  free(differenceSet);
 }
 
 void quest3() {
-  Array *arr = createArray(10);
-  ARADD(arr, 4);
-  ARADD(arr, -7);
-  ARADD(arr, 1);
-  ARADD(arr, 5);
-  ARADD(arr, -4);
-  ARADD(arr, 0);
-  ARADD(arr, -3);
-  ARADD(arr, 2);
-  ARADD(arr, 4);
-  ARADD(arr, 1);
+  int len;
+  printf("Enter the length of the array: ");
+  scanf("%d", &len);
+
+  Array *arr = createArray(len);
+  printf("Enter the array: ");
+  for (int i = 0; i < len; i++) {
+    int elem;
+    scanf("%d", &elem);
+    ARADD(arr, elem);
+  }
 
   int maxSum = maxSumCircularArray(arr);
   printf("Maximum sum of a subarray in the circular array is: %d\n", maxSum);
@@ -154,10 +189,10 @@ int maxSumCircularArray(Array *arr) {
   int totalSum = arr->data[0];
   int minSum = arr->data[0];
   int currMin = arr->data[0];
-
   // Find maximum sum subarray in the array using Kadane's algorithm
   for (int i = 1; i < arr->size; i++) {
     currMax = max(arr->data[i], currMax + arr->data[i]);
+  
     maxSum = max(maxSum, currMax);
 
     currMin = min(arr->data[i], currMin + arr->data[i]);
