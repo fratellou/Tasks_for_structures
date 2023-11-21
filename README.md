@@ -4,7 +4,7 @@ The full implementation of the structures is located in the NoSQL-database repos
 
 ## Contents
 
-1. [Task 1: Stack](#Stack)
+1. [Task 1: Stack](#task-1:-stack)
 2. [Task 2](#Task-2)
 3. [Task 3](#Task-3)
 4. [Task 4](#Task-4)
