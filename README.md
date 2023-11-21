@@ -2,12 +2,12 @@
 
 ## Contents
 
-1. [Task 1](#task1)
-2. [Task 2](#task2)
-3. [Task 3](#task3)
-4. [Task 4](#task4)
-5. [Task 5](#task5)
-6. [Task 6](#task6)
+1. [Task 1](#Task-1)
+2. [Task 2](#Task-2)
+3. [Task 3](#Task-3)
+4. [Task 4](#Task-4)
+5. [Task 5](#Task-5)
+6. [Task 6](#Task-6)
 
 ## Task 1
 Checking the correctness of the bracket sequence.
