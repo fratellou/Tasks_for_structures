@@ -4,14 +4,14 @@ The full implementation of the structures is located in the NoSQL-database repos
 
 ## Contents
 
-1. [Task 1](#Task-1)
+1. [Task 1: Stack](#Stack)
 2. [Task 2](#Task-2)
 3. [Task 3](#Task-3)
 4. [Task 4](#Task-4)
 5. [Task 5](#Task-5)
 6. [Task 6](#Task-6)
 
-## Task 1
+## Task 1: Stack
 Checking the correctness of the bracket sequence.
 The input is a string containing various characters,
 including the parenthesis characters "({[". It is necessary to implement an algorithm that
