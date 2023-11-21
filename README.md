@@ -4,12 +4,12 @@ The full implementation of the structures is located in the NoSQL-database repos
 
 ## Contents
 
-1. [Task 1: Stack](#Task-1:-Stack)
-2. [Task 2: Set](#Task-2:-Set)
-3. [Task 3: Array](#Task-3:-Array)
-4. [Task 4: Binary tree](#Task-4:-Binary-tree)
-5. [Task 5: Queue](#Task-5:-Queue)
-6. [Task 6: Hash table](#Task-6:-Hash-table)
+1. [Task 1: Stack](#Task-1)
+2. [Task 2: Set](#Task-2)
+3. [Task 3: Array](#Task-3)
+4. [Task 4: Binary tree](#Task-4)
+5. [Task 5: Queue](#Task-5)
+6. [Task 6: Hash table](#Task-6)
 
 ## Task 1: Stack
 Checking the correctness of the bracket sequence.
