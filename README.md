@@ -58,3 +58,7 @@ be preserved.
 Example:
 "fall" and "redd" are isomorphic.
 "mad" and "odd" are not isomorphic.
+>
+>
+> 
+> fratellou, 2023
