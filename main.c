@@ -70,8 +70,8 @@ int isBalanced(char *sequence) {
 }
 
 void quest2() {
-  Set *set1 = createSet(10);
-  Set *set2 = createSet(10);
+  Set *set1 = createSet(MAX_LEN);
+  Set *set2 = createSet(MAX_LEN);
 
   SADD(set1, "apple");
   SADD(set1, "banana");
@@ -82,133 +82,82 @@ void quest2() {
   SADD(set2, "watermelon");
 
   printf("Set 1: ");
-  for (int i = 0; i < set1->size; i++) {
-    Node_set *current = set1->buckets[i].next;
-    while (current != NULL) {
-      printf("%s ", current->element);
-      current = current->next;
-    }
-  }
-  printf("\n");
+  printSet(set1);
 
   printf("Set 2: ");
-  for (int i = 0; i < set2->size; i++) {
-    Node_set *current = set2->buckets[i].next;
-    while (current != NULL) {
-      printf("%s ", current->element);
-      current = current->next;
-    }
-  }
-  printf("\n");
+  printSet(set2);
 
   printf("Union set: ");
   Set *unionSet = SUNION(set1, set2);
-  for (int i = 0; i < unionSet->size; i++) {
-    Node_set *current = unionSet->buckets[i].next;
-    while (current != NULL) {
-      printf("%s ", current->element);
-      current = current->next;
-    }
-  }
-  printf("\n");
+  printSet(unionSet);
 
   printf("Intersection set: ");
   Set *intersectionSet = SINTER(set1, set2);
-  for (int i = 0; i < intersectionSet->size; i++) {
-    Node_set *current = intersectionSet->buckets[i].next;
-    while (current != NULL) {
-      printf("%s ", current->element);
-      current = current->next;
-    }
-  }
-  printf("\n");
+  printSet(intersectionSet);
 
   printf("Difference set: ");
   Set *differenceSet = SDIFF(set1, set2);
-  for (int i = 0; i < differenceSet->size; i++) {
-    Node_set *current = differenceSet->buckets[i].next;
-    while (current != NULL) {
-      printf("%s ", current->element);
-      current = current->next;
-    }
-  }
-  printf("\n");
+  printSet(differenceSet);
 
+  printf("'banana' in set1: ");
+  if (SISMEMBER(set1, "banana"))
+    printf("TRUE\n");
+  else
+    printf("FALSE\n");
+  printf("'banana' in set1 after removal: ");
   SREM(set1, "banana");
+  if (SISMEMBER(set1, "banana"))
+    printf("TRUE\n");
+  else
+    printf("FALSE\n");
   SREM(set2, "watermelon");
 
   printf("Set 1 after removal: ");
-  for (int i = 0; i < set1->size; i++) {
-    Node_set *current = set1->buckets[i].next;
-    while (current != NULL) {
-      printf("%s ", current->element);
-      current = current->next;
-    }
-  }
-  printf("\n");
+  printSet(set1);
 
   printf("Set 2 after removal: ");
-  for (int i = 0; i < set2->size; i++) {
-    Node_set *current = set2->buckets[i].next;
-    while (current != NULL) {
-      printf("%s ", current->element);
-      current = current->next;
-    }
-  }
-  printf("\n");
+  printSet(set2);
 
-  free(unionSet);
-  free(intersectionSet);
-  free(differenceSet);
+  freeSet(unionSet);
+  freeSet(intersectionSet);
+  freeSet(differenceSet);
+  free(set1);
+  free(set2);
 }
 
 void quest3() {
-  int len;
-  printf("Enter the length of the array: ");
-  scanf("%d", &len);
+  const char *sequence1 = "meow@stud.nstu.ru";
+  const char *pattern1 = "*nstu.ru";
+  printf("Sequence: %s\nPattern: %s\nMatch: %s\n", sequence1, pattern1,
+         matchPattern(sequence1, pattern1) ? "true" : "false");
 
-  Array *arr = createArray(len);
-  printf("Enter the array: ");
-  for (int i = 0; i < len; i++) {
-    int elem;
-    scanf("%d", &elem);
-    ARADD(arr, elem);
-  }
-
-  int maxSum = maxSumCircularArray(arr);
-  printf("Maximum sum of a subarray in the circular array is: %d\n", maxSum);
+  const char *sequence2 = "hello";
+  const char *pattern2 = "h?lo";
+  printf("Sequence: %s\nPattern: %s\nMatch: %s\n", sequence2, pattern2,
+         matchPattern(sequence2, pattern2) ? "true" : "false");
 }
 
-int max(int a, int b) { return (a > b) ? a : b; }
-
-int min(int a, int b) { return (a < b) ? a : b; }
-// Function to find the maximum sum subarray in a circular array
-int maxSumCircularArray(Array *arr) {
-  int maxSum = arr->data[0];
-  int currMax = arr->data[0];
-  int totalSum = arr->data[0];
-  int minSum = arr->data[0];
-  int currMin = arr->data[0];
-  // Find maximum sum subarray in the array using Kadane's algorithm
-  for (int i = 1; i < arr->size; i++) {
-    currMax = max(arr->data[i], currMax + arr->data[i]);
-  
-    maxSum = max(maxSum, currMax);
-
-    currMin = min(arr->data[i], currMin + arr->data[i]);
-    minSum = min(minSum, currMin);
-
-    totalSum += arr->data[i];
+int matchPattern(const char *sequence, const char *pattern) {
+  while (*sequence != '\0' && *pattern != '\0') {
+    if (*pattern == '*') {
+      // Проверка для случая "*"
+      // Пропускаем "*", сравниваем оставшуюся часть шаблона и
+      // последовательности
+      while (*pattern == '*') pattern++;
+      while (*sequence != '\0' && !matchPattern(sequence, pattern)) sequence++;
+    } else if (*pattern == '?' || *sequence == *pattern) {
+      // Проверка для случая "?" или совпадения символов
+      sequence++;
+      pattern++;
+    } else {
+      // Если символы не совпадают
+      return 0;
+    }
   }
 
-  // If the total sum is equal to the minimum sum, return the maximum sum
-  if (totalSum - minSum == 0) {
-    return maxSum;
-  }
-
-  // Return the maximum of the maximum sum subarray and the difference
-  // between the total sum and the minimum sum subarray
-  return max(maxSum, totalSum - minSum);
+  // Если достигнут конец и шаблон и последовательность одновременно, то
+  // совпадение
+  return *sequence == '\0' && *pattern == '\0';
 }
 
 void quest4() {
@@ -370,48 +319,12 @@ void bfs(int N, int startX, int startY, int targetX, int targetY) {
 }
 
 void quest6() {
-  char str1[MAX_LEN];
-  printf("Enter a first string: ");
-  scanf("%s", str1);
+  HashTable *hashTable = createHashTable(10);
 
-  char str2[MAX_LEN];
-  printf("Enter a second string: ");
-  scanf("%s", str2);
+  HSET(hashTable, "name", "John");
+  HSET(hashTable, "age", "25");
+  HSET(hashTable, "city", "New York");
 
-  if (isIsomorphic(str1, str2))
-    printf("Strings are isomorphic\n");
-  else
-    printf("Strings are not isomorphic\n");
-}
-
-int isIsomorphic(char *a, char *b) {
-  int len_a = strlen(a);
-  int len_b = strlen(b);
-
-  if (len_a != len_b) {
-    return 0;  // Strings of different lengths cannot be isomorphic
-  }
-
-  HashTable *a_to_b = createHashTable(
-      len_a);  // Hash table for storing characters from string a
-  HashTable *b_to_a = createHashTable(
-      len_b);  // Hash table for storing characters from string b
-
-  for (int i = 0; i < len_a; i++) {
-    char ch_a = a[i];
-    char ch_b = b[i];
-
-    char *elem_a_to_b = HGET(a_to_b, &ch_a);
-    char *elem_b_to_a = HGET(b_to_a, &ch_b);
-
-    if ((elem_a_to_b != NULL && *elem_a_to_b != ch_b) ||
-        (elem_b_to_a != NULL && *elem_b_to_a != ch_a)) {
-      return 0;  // A character mismatch was found
-    }
-
-    HSET(a_to_b, &ch_a, &ch_b);
-    HSET(b_to_a, &ch_b, &ch_a);
-  }
-
-  return 1;  // Strings are isomorphic
+  printf("Hash Table Contents:\n");
+  printHashTable(hashTable);
 }

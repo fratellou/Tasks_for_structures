@@ -27,11 +27,14 @@ sets, crossing sets, difference sets.
 
 
 ## Task 3: Array
-It is necessary to implement an algorithm that finds
-the subarray with the largest sum in a circular array.
+It is necessary to implement an algorithm that compares a sequence
+of characters with a template and outputs a message about compliance. Note that
+the symbol "?" it can replace one character, and "*" can replace any sequence,
+including zero.
 Example:
-Array [ 4, -7, 1, 5, -4, 0, -3, 2, 4, 1]
-The subarray with the largest amount - [2, 4, 1, 4]
+sequence "meow@stud.nstu.ru "matches the template
+"*@stud.nstu.ru ".
+the sequence "hello" does not match the pattern "h?lo".
 
 
 ## Task 4: Binary tree
@@ -49,15 +52,8 @@ Result: (1, 4) -> (3, 3) -> (1, 2) -> (3, 1).
 
 
 ## Task 6: Hash table
-It is necessary to implement an algorithm that determines whether the strings
-are isomorphic.
-Two strings a and b are considered isomorphic if the characters in a can be replaced
-by b.
-A character is matched only to one other, the order of the characters must
-be preserved.
-Example:
-"fall" and "redd" are isomorphic.
-"mad" and "odd" are not isomorphic.
+Implement a hash table in which collisions will be handled
+using the chain method.
 >
 >
 > 

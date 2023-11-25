@@ -63,3 +63,14 @@ char *HGET(HashTable *hashtable, char *key) {
   }
   return NULL;
 }
+
+// Function to print the contents of the hash table
+void printHashTable(HashTable *hashtable) {
+  for (int i = 0; i < hashtable->capacity; i++) {
+    Node_hash *current = hashtable->table[i];
+    while (current != NULL) {
+      printf("Key: %s, Value: %s\n", current->key, current->element);
+      current = current->next;
+    }
+  }
+}

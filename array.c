@@ -21,20 +21,3 @@ int ARADD(Array *arr, int element) {
   }
   return -1;
 }
-
-void printArray(Array *arr) {
-  for (int i = 0; i < arr->size; i++) {
-    printf("%d ", arr->data[i]);
-  }
-  printf("\n");
-}
-
-// Function to remove an element at a specific index in the array
-void ARREM(Array *arr, int index) {
-  if (arr->size > 0 && index >= 0 && index < arr->size) {
-    for (int i = index; i < arr->size - 1; i++) {
-      arr->data[i] = arr->data[i + 1];
-    }
-    arr->size--;
-  }
-}

@@ -3,12 +3,12 @@
 #define MAX_LEN 256
 
 typedef struct Node_set {
-  char* element;
+  char *element;
   struct Node_set *next;
 } Node_set;
 
 typedef struct Set {
-  Node_set *buckets;
+  Node_set **buckets;
   int size;
 } Set;
 
@@ -20,4 +20,6 @@ int SISMEMBER(Set *set, char *element);
 Set *SUNION(Set *set1, Set *set2);
 Set *SINTER(Set *set1, Set *set2);
 Set *SDIFF(Set *set1, Set *set2);
+void printSet(Set *set);
+void freeSet(Set *set);
 #endif

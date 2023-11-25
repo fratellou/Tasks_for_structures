@@ -6,9 +6,13 @@ typedef struct {
   int size;
 } Array;
 
+typedef struct {
+  int maxSum;
+  int startIndex;
+  int endIndex;
+} Result;
+
 Array *createArray(int size);
 int ARADD(Array *arr, int element);
-void printArray(Array *arr);
-void ARREM(Array *arr, int index);
 
 #endif
