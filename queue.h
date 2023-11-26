@@ -14,5 +14,6 @@ typedef struct Queue {
 
 void QPUSH(Queue *queue, int element);
 void QPOP(Queue *queue);
+void freeQueue(Queue *queue);
 
 #endif

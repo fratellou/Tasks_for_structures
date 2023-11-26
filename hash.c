@@ -74,3 +74,20 @@ void printHashTable(HashTable *hashtable) {
     }
   }
 }
+
+// Function to free the memory allocated for the hash table
+void freeHashTable(HashTable *hashtable) {
+  for (int i = 0; i < hashtable->capacity; i++) {
+    Node_hash *current = hashtable->table[i];
+    Node_hash *next;
+    while (current != NULL) {
+      next = current->next;
+      free(current->key);
+      free(current->element);
+      free(current);
+      current = next;
+    }
+  }
+  free(hashtable->table);
+  free(hashtable);
+}

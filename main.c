@@ -34,7 +34,7 @@ int main() {
 void quest1() {
   char sequence[MAX_LEN];
   printf("Enter a sequence of brackets: ");
-  scanf("%s", sequence);
+  scanf("%254s", sequence);
 
   if (isBalanced(sequence)) {
     printf("The brackets are balanced\n");
@@ -121,8 +121,8 @@ void quest2() {
   freeSet(unionSet);
   freeSet(intersectionSet);
   freeSet(differenceSet);
-  free(set1);
-  free(set2);
+  freeSet(set1);
+  freeSet(set2);
 }
 
 void quest3() {
@@ -173,12 +173,13 @@ void quest4() {
     root = TADD(root, key);
   }
 
-  int isBST = isBinarySearchTree(root);
-  if (isBST) {
+  int BST = isBinarySearchTree(root);
+  if (BST) {
     printf("The tree is a BST\n");
   } else {
     printf("The tree is not a BST\n");
   }
+  freeTree(root);
 }
 
 int isBST(Node_tree *node, int min, int max) {
@@ -239,8 +240,8 @@ void bfs(int N, int startX, int startY, int targetX, int targetY) {
   board[startX][startY] = 0;
 
   // Возможные шаги коня
-  int dx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
-  int dy[] = {1, 2, 2, 1, -1, -2, -2, -1};
+  const int dx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
+  const int dy[] = {1, 2, 2, 1, -1, -2, -2, -1};
 
   while (queue.size > 0) {
     // Получаем текущую клетку из очереди
@@ -316,6 +317,7 @@ void bfs(int N, int startX, int startY, int targetX, int targetY) {
       printf(" -> ");
     }
   }
+  freeQueue(&queue);
 }
 
 void quest6() {
@@ -327,4 +329,5 @@ void quest6() {
 
   printf("Hash Table Contents:\n");
   printHashTable(hashTable);
+  freeHashTable(hashTable);
 }

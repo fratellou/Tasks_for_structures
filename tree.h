@@ -11,5 +11,6 @@ typedef struct Node_tree {
 
 Node_tree* createNode(int key);
 Node_tree* TADD(Node_tree* root, int key);
+void freeTree(Node_tree* root);
 
 #endif

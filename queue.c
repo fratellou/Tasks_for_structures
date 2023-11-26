@@ -25,8 +25,32 @@ void QPUSH(Queue *queue, int element) {
 // Pop an element from the queue
 void QPOP(Queue *queue) {
   if (queue->head == NULL) {
-  } else {
-    queue->head = queue->head->next;
-    queue->size--;
+    return;
   }
+
+  Node_que *temp = queue->head;
+  queue->head = queue->head->next;
+  free(temp);
+  queue->size--;
+
+  if (queue->head == NULL) {
+    queue->tail = NULL;
+  }
+}
+
+// Free the memory allocated for the queue
+void freeQueue(Queue *queue) {
+  Node_que *current = queue->head;
+  Node_que *next;
+
+  while (current != NULL) {
+    next = current->next;
+    free(current);
+    current = next;
+  }
+
+  // Reset the queue properties
+  queue->head = NULL;
+  queue->tail = NULL;
+  queue->size = 0;
 }

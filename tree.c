@@ -28,3 +28,15 @@ Node_tree* TADD(Node_tree* root, int key) {
   }
   return root;
 }
+
+// This function frees the memory allocated for the binary tree
+void freeTree(Node_tree* root) {
+  if (root != NULL) {
+    // Free the left and right subtrees
+    freeTree(root->left);
+    freeTree(root->right);
+
+    // Free the current node
+    free(root);
+  }
+}

@@ -18,5 +18,6 @@ int hash_calc(char *key, int capacity);
 void HSET(HashTable *hashtable, char *key, char *value);
 char *HGET(HashTable *hashtable, char *key);
 void printHashTable(HashTable *hashtable);
+void freeHashTable(HashTable *hashtable);
 
 #endif
