@@ -127,19 +127,19 @@ void quest2() {
 
 void quest3() {
   Array *sequence1 = createArray(MAX_LEN);
-  sequence1->data = "meow@stud.nstu.ru";
+  sequence1->data = strdup("meow@stud.nstu.ru");
   sequence1->size = strlen(sequence1->data);
 
   Array *template1 = createArray(MAX_LEN);
-  template1->data = "*@stud.nstu.ru";
+  template1->data = strdup("*@stud.nstu.ru");
   template1->size = strlen(template1->data);
 
   Array *sequence2 = createArray(MAX_LEN);
-  sequence2->data = "hello";
+  sequence2->data = strdup("hello");
   sequence2->size = strlen(sequence2->data);
 
   Array *template2 = createArray(MAX_LEN);
-  template2->data = "h?lo";
+  template2->data = strdup("h?lo");
   template2->size = strlen(template2->data);
 
   if (match(sequence1, template1)) {
