@@ -126,38 +126,71 @@ void quest2() {
 }
 
 void quest3() {
-  const char *sequence1 = "meow@stud.nstu.ru";
-  const char *pattern1 = "*nstu.ru";
-  printf("Sequence: %s\nPattern: %s\nMatch: %s\n", sequence1, pattern1,
-         matchPattern(sequence1, pattern1) ? "true" : "false");
+  Array *sequence1 = createArray(MAX_LEN);
+  sequence1->data = "meow@stud.nstu.ru";
+  sequence1->size = strlen(sequence1->data);
 
-  const char *sequence2 = "hello";
-  const char *pattern2 = "h?lo";
-  printf("Sequence: %s\nPattern: %s\nMatch: %s\n", sequence2, pattern2,
-         matchPattern(sequence2, pattern2) ? "true" : "false");
+  Array *template1 = createArray(MAX_LEN);
+  template1->data = "*@stud.nstu.ru";
+  template1->size = strlen(template1->data);
+
+  Array *sequence2 = createArray(MAX_LEN);
+  sequence2->data = "hello";
+  sequence2->size = strlen(sequence2->data);
+
+  Array *template2 = createArray(MAX_LEN);
+  template2->data = "h?lo";
+  template2->size = strlen(template2->data);
+
+  if (match(sequence1, template1)) {
+    printf("Sequence 1 matches the template\n");
+  } else {
+    printf("Sequence 1 does not match the template\n");
+  }
+
+  if (match(sequence2, template2)) {
+    printf("Sequence 2 matches the template\n");
+  } else {
+    printf("Sequence 2 does not match the template\n");
+  }
+
+  free(sequence1->data);
+  free(sequence1);
+  free(template1->data);
+  free(template1);
+  free(sequence2->data);
+  free(sequence2);
+  free(template2->data);
+  free(template2);
 }
 
-int matchPattern(const char *sequence, const char *pattern) {
-  while (*sequence != '\0' && *pattern != '\0') {
-    if (*pattern == '*') {
-      // Проверка для случая "*"
-      // Пропускаем "*", сравниваем оставшуюся часть шаблона и
-      // последовательности
-      while (*pattern == '*') pattern++;
-      while (*sequence != '\0' && !matchPattern(sequence, pattern)) sequence++;
-    } else if (*pattern == '?' || *sequence == *pattern) {
-      // Проверка для случая "?" или совпадения символов
-      sequence++;
-      pattern++;
-    } else {
-      // Если символы не совпадают
-      return 0;
+// Function to check if a sequence matches a template
+bool match(Array *sequence, Array *template) {
+  int seqLen = sequence->size;
+  int templateLen = template->size;
+
+  int dp[seqLen + 1][templateLen + 1];
+  memset(dp, 0, sizeof(dp));
+  dp[0][0] = 1;
+
+  for (int j = 1; j <= templateLen; j++) {
+    if (template->data[j - 1] == '*') {
+      dp[0][j] = dp[0][j - 1];
     }
   }
 
-  // Если достигнут конец и шаблон и последовательность одновременно, то
-  // совпадение
-  return *sequence == '\0' && *pattern == '\0';
+  for (int i = 1; i <= seqLen; i++) {
+    for (int j = 1; j <= templateLen; j++) {
+      if (template->data[j - 1] == sequence->data[i - 1] ||
+          template->data[j - 1] == '?') {
+        dp[i][j] = dp[i - 1][j - 1];
+      } else if (template->data[j - 1] == '*') {
+        dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
+      }
+    }
+  }
+
+  return dp[seqLen][templateLen];
 }
 
 void quest4() {
@@ -183,28 +216,25 @@ void quest4() {
 }
 
 int isBST(Node_tree *node, int min, int max) {
-  // Пустое дерево считается валидным BST
+  // An empty tree is considered valid BST
   if (node == NULL) {
     return 1;
   }
 
-  // Проверяем, что значение текущего узла находится в допустимом интервале
+  // Check that the value of the current node is in the acceptable range
   if (node->key < min || node->key > max) {
     return 0;
   }
 
-  // Рекурсивно проверяем левое и правое поддерево
   return isBST(node->left, min, node->key - 1) &&
          isBST(node->right, node->key + 1, max);
 }
 
-// Функция для проверки, является ли дерево BST
+// Function to check whether the tree is BST
 int isBinarySearchTree(Node_tree *root) {
-  // Указываем начальные значения границ для проверки
   int min = INT_MIN;
   int max = INT_MAX;
 
-  // Рекурсивно вызываем функцию isBST для корневого узла
   return isBST(root, min, max);
 }
 
@@ -219,64 +249,64 @@ void quest5() {
 }
 
 void bfs(int N, int startX, int startY, int targetX, int targetY) {
-  // Создаем шахматную доску размером NxN
   int board[N][N];
 
-  // Инициализируем доску значением -1, чтобы отслеживать пустые клетки
+  // Initialize the board with the value -1 to keep track of empty cells
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
       board[i][j] = -1;
     }
   }
 
-  // Создаем очередь для обхода
+  // Creating a queue for crawling
   Queue queue;
   queue.head = NULL;
   queue.tail = NULL;
   queue.size = 0;
 
-  // Добавляем стартовую клетку в очередь
+  // Adding the starting cell to the queue
   QPUSH(&queue, startX * N + startY);
   board[startX][startY] = 0;
 
-  // Возможные шаги коня
+  // Possible steps of the horse
   const int dx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
   const int dy[] = {1, 2, 2, 1, -1, -2, -2, -1};
 
   while (queue.size > 0) {
-    // Получаем текущую клетку из очереди
+    // Getting the current cell from the queue
     int current = queue.head->data;
     QPOP(&queue);
 
-    // Разделяем координаты текущей клетки
+    // We divide the coordinates of the current cell
     int x = current / N;
     int y = current % N;
 
-    // Проверяем, является ли текущая клетка целевой
+    // Check if the current cell is the target cell
     if (x == targetX && y == targetY) {
       break;
     }
 
-    // Перебираем все возможные шаги коня
+    // We go through all the possible steps of the horse
     for (int i = 0; i < 8; i++) {
       int newX = x + dx[i];
       int newY = y + dy[i];
 
-      // Проверяем, что новые координаты входят в границы доски
+      // We check that the new coordinates are included in the boundaries of the
+      // board
       if (newX >= 0 && newX < N && newY >= 0 && newY < N) {
-        // Проверяем, что клетка еще не посещена
+        // We check that the cell has not been visited yet
         if (board[newX][newY] == -1) {
-          // Увеличиваем расстояние до новой клетки
+          // Increasing the distance to the new cell
           board[newX][newY] = board[x][y] + 1;
 
-          // Добавляем новую клетку в очередь
+          // Adding a new cell to the queue
           QPUSH(&queue, newX * N + newY);
         }
       }
     }
   }
 
-  // Восстанавливаем путь обратно от целевой клетки
+  // Restoring the path back from the target cell
   int path[N * N][2];
   int pathIndex = 0;
 
@@ -287,15 +317,16 @@ void bfs(int N, int startX, int startY, int targetX, int targetY) {
   pathIndex++;
 
   while (x != startX || y != startY) {
-    // Перебираем все возможные шаги коня
+    // We go through all the possible steps of the horse
     for (int i = 0; i < 8; i++) {
       int newX = x + dx[i];
       int newY = y + dy[i];
 
-      // Проверяем, что новые координаты входят в границы доски
+      // We check that the new coordinates are included in the boundaries of the
+      // board
       if (newX >= 0 && newX < N && newY >= 0 && newY < N) {
-        // Проверяем, что расстояние от текущей клетки до новой клетки меньше на
-        // 1
+        // Check that the distance from the current cell to the new cell is less
+        // by 1
         if (board[newX][newY] == board[x][y] - 1) {
           x = newX;
           y = newY;
@@ -310,7 +341,7 @@ void bfs(int N, int startX, int startY, int targetX, int targetY) {
     }
   }
 
-  // Выводим путь
+  // Output the path
   for (int i = pathIndex - 1; i >= 0; i--) {
     printf("(%d, %d)", path[i][0] + 1, path[i][1] + 1);
     if (i > 0) {

@@ -1,6 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <stdbool.h>
+
 #include "array.h"
 #include "hash.h"
 #include "queue.h"
@@ -15,7 +17,7 @@ void quest4();
 void quest5();
 void quest6();
 int isBalanced(char *sequence);
-int matchPattern(const char *sequence, const char *pattern);
+bool match(Array *sequence, Array *template);
 int isBST(Node_tree *node, int min, int max);
 int isBinarySearchTree(Node_tree *root);
 void bfs(int N, int startX, int startY, int targetX, int targetY);
