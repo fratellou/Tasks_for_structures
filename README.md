@@ -1,6 +1,6 @@
 # Tasks_for_structures
 
-The full implementation of the structures is located in the NoSQL-database repository.
+The full implementation of the structures is located in the NoSQL-database repository https://github.com/fratellou/NoSQL-database.
 
 ## Contents
 
