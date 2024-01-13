@@ -20,43 +20,43 @@ Quest_5: quest_5.o stack.o hash.o set.o array.o tree.o queue.o
 Quest_6: quest_6.o stack.o hash.o set.o array.o tree.o queue.o
 	gcc $(CFLAGS) main.o stack.o hash.o set.o array.o tree.o queue.o -o quest_6
 
-hash.o: hash.h hash.c
+hash.o: 
 	gcc $(CFLAGS) -c hash.c
 
-stack.o: stack.h stack.c
+stack.o:
 	gcc $(CFLAGS) -c stack.c
 
-set.o: set.h set.c
+set.o:
 	gcc $(CFLAGS) -c set.c
 
-double_set.o: double_set.h double_set.c
+double_set.o:
 	gcc $(CFLAGS) -c double_set.c
 
-queue.o: queue.h queue.c 
+queue.o:
 	gcc $(CFLAGS) -c queue.c
 
-array.o: array.h array.c 
+array.o: 
 	gcc $(CFLAGS) -c array.c
 
-tree.o: tree.h tree.c 
+tree.o: 
 	gcc $(CFLAGS) -c tree.c
 
-quest_1.o: main.c main.h
+quest_1.o: 
 	gcc $(CFLAGS) -DQUEST1 main.c -c 
 
-quest_2.o: main.c main.h
+quest_2.o: 
 	gcc $(CFLAGS) -DQUEST2 main.c -c
 
-quest_3.o: main.c main.h
+quest_3.o: 
 	gcc $(CFLAGS) -DQUEST3 main.c -c
 
-quest_4.o: main.c main.h
+quest_4.o: 
 	gcc $(CFLAGS) -DQUEST4 main.c -c
 
-quest_5.o: main.c main.h
+quest_5.o: 
 	gcc $(CFLAGS) -DQUEST5 main.c -c
 
-quest_6.o: main.c main.h
+quest_6.o: 
 	gcc $(CFLAGS) -DQUEST6 main.c -c
 
 clean: 
